@@ -5,5 +5,5 @@ import { DB_BLOGS } from "../db/DB";
 
 export const clearDB = (req: Request, res: Response) => {
     DB_BLOGS.blogs = []
-    res.status(SETTINGS.STATUS.NO_CONTENT).json()
+    res.status(SETTINGS.HTTP_STATUS.NO_CONTENT).json()
 };

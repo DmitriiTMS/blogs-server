@@ -7,7 +7,7 @@ export const SETTINGS = {
         BLOGS: '/blogs',
         TEST: '/testing/all-data'
     },
-    STATUS: {
+    HTTP_STATUS: {
         OK: 200,
         GREATED: 201,
         NO_CONTENT: 204,
