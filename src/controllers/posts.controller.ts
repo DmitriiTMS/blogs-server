@@ -23,7 +23,7 @@ export const postsController = {
         const { blogId } = req.body;
         const blogById = blogsRepository.getBlog(blogId)
 
-        if (!blogById) {
+        if (!blogById && !errorsResult.isEmpty()) {
             res.status(SETTINGS.HTTP_STATUS.BAD_REQUEST).json({
                 errorsMessages: errorsResult.array({ onlyFirstError: true }),
             });
@@ -39,7 +39,7 @@ export const postsController = {
             // return;
         }
 
-        const newPost = postsRepository.createPost(req.body, blogById)
+        const newPost = postsRepository.createPost(req.body, blogById!)
         res.status(SETTINGS.HTTP_STATUS.GREATED).json(newPost);
     },
 
