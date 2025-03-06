@@ -34,7 +34,7 @@ export const postsController = {
         const { id } = req.params;
         const post = postsRepository.getPost(id);
         if (!post) {
-            res.status(SETTINGS.HTTP_STATUS.NOT_FOUND).json();
+            res.sendStatus(SETTINGS.HTTP_STATUS.NOT_FOUND);
             return;
         }
         res.status(SETTINGS.HTTP_STATUS.OK).json(post);
@@ -45,7 +45,7 @@ export const postsController = {
         const post = postsRepository.updatePost(id, req.body)
 
         if (!post) {
-            res.status(SETTINGS.HTTP_STATUS.NOT_FOUND).json();
+            res.sendStatus(SETTINGS.HTTP_STATUS.NOT_FOUND);
             return;
         }
 
@@ -64,18 +64,18 @@ export const postsController = {
             return;
         }
 
-        res.status(SETTINGS.HTTP_STATUS.NO_CONTENT).json();
+        res.sendStatus(SETTINGS.HTTP_STATUS.NO_CONTENT);
     },
 
     deletePost(req: Request, res: Response) {
         const { id } = req.params;
         const post = postsRepository.getPost(id)
         if (!post) {
-            res.status(SETTINGS.HTTP_STATUS.NOT_FOUND).json();
+            res.sendStatus(SETTINGS.HTTP_STATUS.NOT_FOUND);
             return;
         } else {
             postsRepository.deletePost(id)
-            res.status(SETTINGS.HTTP_STATUS.NO_CONTENT).json();
+            res.sendStatus(SETTINGS.HTTP_STATUS.NO_CONTENT);
             return;
         }
     },

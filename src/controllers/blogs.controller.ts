@@ -17,7 +17,7 @@ export const blogsController = {
     const { id } = req.params;
     const blog = blogsRepository.getBlog(id);
     if (!blog) {
-      res.status(SETTINGS.HTTP_STATUS.NOT_FOUND).json();
+      res.sendStatus(SETTINGS.HTTP_STATUS.NOT_FOUND);
       return;
     }
     res.status(SETTINGS.HTTP_STATUS.OK).json(blog);
@@ -28,21 +28,21 @@ export const blogsController = {
     const blog = blogsRepository.updateBlog(id, req.body);
 
     if (!blog) {
-      res.status(SETTINGS.HTTP_STATUS.NOT_FOUND).json();
+      res.sendStatus(SETTINGS.HTTP_STATUS.NOT_FOUND);
       return;
     }
-    res.status(SETTINGS.HTTP_STATUS.NO_CONTENT).json();
+    res.sendStatus(SETTINGS.HTTP_STATUS.NO_CONTENT);
   },
 
   deleteBlog(req: Request, res: Response) {
     const { id } = req.params;
     const blog = blogsRepository.getBlog(id);
     if (!blog) {
-      res.status(SETTINGS.HTTP_STATUS.NOT_FOUND).json();
+      res.sendStatus(SETTINGS.HTTP_STATUS.NOT_FOUND);
       return;
     } else {
       blogsRepository.deleteBlog(id);
-      res.status(SETTINGS.HTTP_STATUS.NO_CONTENT).json();
+      res.sendStatus(SETTINGS.HTTP_STATUS.NO_CONTENT);
       return;
     }
   },

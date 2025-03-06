@@ -13,6 +13,7 @@ export const SETTINGS = {
         GREATED: 201,
         NO_CONTENT: 204,
         BAD_REQUEST: 400,
+        UNAUTHORIZATION: 401,
         NOT_FOUND: 404,
     }
 }
