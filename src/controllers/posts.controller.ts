@@ -15,25 +15,12 @@ export const postsController = {
         const { blogId } = req.body;
         const blogById = blogsRepository.getBlog(blogId)
 
-        // if (!blogById) {
-        //     res.status(SETTINGS.HTTP_STATUS.BAD_REQUEST).json({
-        //         errorsMessages: [
-        //             {
-        //                 message: `Blog by id: ${blogId} not found`,
-        //                 field: "blogId"
-        //             }
-        //         ]
-        //     });
-        //     return;
-        // }
-
         if(blogById) {
             const newPost = postsRepository.createPost(req.body, blogById)
             res.status(SETTINGS.HTTP_STATUS.GREATED).json(newPost);
             return
         }
 
-       
     },
 
     getPostById(req: Request, res: Response) {
@@ -52,21 +39,6 @@ export const postsController = {
 
         if (!post) {
             res.sendStatus(SETTINGS.HTTP_STATUS.NOT_FOUND);
-            return;
-        }
-
-        const { blogId } = req.body;
-        const blogById = blogsRepository.getBlog(blogId)
-
-        if (!blogById) {
-            res.status(SETTINGS.HTTP_STATUS.BAD_REQUEST).json({
-                errorsMessages: [
-                    {
-                        message: `Blog by id: ${blogId} not found`,
-                        field: "blogId"
-                    }
-                ]
-            });
             return;
         }
 
