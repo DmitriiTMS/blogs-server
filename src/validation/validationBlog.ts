@@ -8,7 +8,7 @@ const nameValidation = body("name")
   .isString()
   .withMessage("The Name field must be a string")
   .trim()
-  .isLength({ max: 15 })
+  .isLength({min: 1, max: 15 })
   .withMessage("The Name field must be a maximum of 15 characters");
 
 const descriptionValidation = body("description")
