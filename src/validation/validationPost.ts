@@ -1,4 +1,5 @@
 import { body } from "express-validator";
+import { blogsRepository } from "../repository/blogsRepository";
 
 const titleValidation = body("title")
     .exists()
@@ -43,6 +44,12 @@ const blogIdValidation = body("blogId")
     .withMessage("BlogId cannot be empty")
     .isString()
     .withMessage("The BlogId field must be a string")
+    .custom((value) => {
+        const blogExists = blogsRepository.getBlog(value);
+        if (!blogExists) {
+            throw new Error();
+        }
+    }).withMessage('BlogId Not found');
 
 
 export const fieldValidationPost = [
