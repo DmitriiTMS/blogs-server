@@ -8,14 +8,14 @@ export const postsRepository = {
         return DB_POSTS.posts;
     },
 
-    createPost(postDto: Post) {
+    createPost(postDto: Post, blogDto: BlogDto) {
         const newPost = {
             id: Math.random().toString(36).substring(2),
             title: postDto.title,
             shortDescription: postDto.shortDescription,
             content: postDto.content,
-            blogId: postDto.blogId,
-            blogName: postDto.blogName
+            blogId: blogDto.id,
+            blogName: blogDto.name
         };
         DB_POSTS.posts.push(newPost);
         return newPost;
