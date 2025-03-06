@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import { postsRepository } from "../repository/postsRepository";
 import { SETTINGS } from "../settings/settings";
 import { blogsRepository } from "../repository/blogsRepository";
+import { ValidationError, validationResult } from "express-validator";
 
 export const postsController = {
     getAllPosts(req: Request, res: Response) {
@@ -10,20 +11,32 @@ export const postsController = {
     },
 
     createPost(req: Request, res: Response) {
+        
+        const errorsResult = validationResult(req).formatWith((error) => {
+            const validationError = error as ValidationError & { path: string };
+            return {
+                message: validationError.msg,
+                field: validationError.path,
+            };
+        });
 
         const { blogId } = req.body;
         const blogById = blogsRepository.getBlog(blogId)
 
         if (!blogById) {
             res.status(SETTINGS.HTTP_STATUS.BAD_REQUEST).json({
-                errorsMessages: [
-                    {
-                        message: `Blog by id: ${blogId} not found`,
-                        field: "blogId"
-                    }
-                ]
+                errorsMessages: errorsResult.array({ onlyFirstError: true }),
             });
             return;
+            // res.status(SETTINGS.HTTP_STATUS.BAD_REQUEST).json({
+            //     errorsMessages: [
+            //         {
+            //             message: `Blog by id: ${blogId} not found`,
+            //             field: "blogId"
+            //         }
+            //     ]
+            // });
+            // return;
         }
 
         const newPost = postsRepository.createPost(req.body, blogById)

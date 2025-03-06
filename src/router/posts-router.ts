@@ -9,7 +9,7 @@ import { authSuperAdminMiddleware } from "../middlewares/authSuperAdminMiddlewar
 export const postsRouter = Router();
 
 postsRouter.get("/", postsController.getAllPosts);
-postsRouter.post("/",authSuperAdminMiddleware,
+postsRouter.post("/", authSuperAdminMiddleware,
         fieldValidationPost, validationPostResultMiddleware, postsController.createPost);
 postsRouter.get("/:id", postsController.getPostById);
 postsRouter.put("/:id", authSuperAdminMiddleware,

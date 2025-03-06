@@ -2,6 +2,7 @@ import { NextFunction, Request, Response } from "express";
 import { ValidationError, validationResult } from "express-validator";
 import { SETTINGS } from "../settings/settings";
 
+
 export const validationPostResultMiddleware = (
     req: Request,
     res: Response,
