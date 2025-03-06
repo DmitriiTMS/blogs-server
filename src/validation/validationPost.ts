@@ -44,12 +44,13 @@ const blogIdValidation = body("blogId")
     .withMessage("BlogId cannot be empty")
     .isString()
     .withMessage("The BlogId field must be a string")
-    // .custom((value) => {
-    //     const blogExists = blogsRepository.getBlog(value);
-    //     if (!blogExists) {
-    //         throw new Error();
-    //     }
-    // }).withMessage('BlogId Not found');
+    .custom((value) => {        
+        const blogExists = blogsRepository.getBlog(value);
+        if (!blogExists) {
+            throw new Error();
+        }
+        return true
+    }).withMessage('BlogId Not found');
 
 
 export const fieldValidationPost = [

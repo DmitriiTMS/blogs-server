@@ -11,35 +11,26 @@ export const postsController = {
     },
 
     createPost(req: Request, res: Response) {
-        
-        const errorsResult = validationResult(req).formatWith((error) => {
-            const validationError = error as ValidationError & { path: string };
-            return {
-                message: validationError.msg,
-                field: validationError.path,
-            };
-        });
 
         const { blogId } = req.body;
         const blogById = blogsRepository.getBlog(blogId)
 
-        if (!blogById && !errorsResult.isEmpty()) {
+        console.log('NO CUSTOM', blogById);
+        
+
+        if (!blogById) {
             res.status(SETTINGS.HTTP_STATUS.BAD_REQUEST).json({
-                errorsMessages: errorsResult.array({ onlyFirstError: true }),
+                errorsMessages: [
+                    {
+                        message: `Blog by id: ${blogId} not found`,
+                        field: "blogId"
+                    }
+                ]
             });
             return;
-            // res.status(SETTINGS.HTTP_STATUS.BAD_REQUEST).json({
-            //     errorsMessages: [
-            //         {
-            //             message: `Blog by id: ${blogId} not found`,
-            //             field: "blogId"
-            //         }
-            //     ]
-            // });
-            // return;
         }
 
-        const newPost = postsRepository.createPost(req.body, blogById!)
+        const newPost = postsRepository.createPost(req.body, blogById)
         res.status(SETTINGS.HTTP_STATUS.GREATED).json(newPost);
     },
 
