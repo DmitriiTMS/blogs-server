@@ -1,7 +1,7 @@
 import { Router } from "express";
 import { blogsController } from "../controllers/blogs.controller";
 import { fieldValidationBlog } from "../validation/validationBlog";
-import { validationBlogResultMiddleware } from "../middlewares/validationResultMidleware";
+import { validationBlogResultMiddleware } from "../middlewares/validationBlogResultMidleware";
 
 export const blogsRouter = Router();
 

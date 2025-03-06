@@ -1,11 +1,12 @@
-import { Blog, DB_BLOGS } from "../db/DB";
+import { DB_BLOGS } from "../db/DB";
+import { Blog } from "../types/blog-types";
 
 export const blogsRepository = {
-  getAll() {
+  getAll(): Blog[] {
     return DB_BLOGS.blogs;
   },
 
-  createBlog(blogDto: Blog) {
+  createBlog(blogDto: Blog):Blog {
     const newBlog = {
       id: Math.random().toString(36).substring(2),
       name: blogDto.name,
@@ -21,8 +22,7 @@ export const blogsRepository = {
   },
 
   updateBlog(id: string, blogDto: Blog) {
-    const blog = DB_BLOGS.blogs.find((blog) => blog.id === id);
-
+    const blog = this.getBlog(id);
     if (blog) {
       blog.name = blogDto.name;
       blog.description = blogDto.description;
