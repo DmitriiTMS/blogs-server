@@ -1,20 +1,23 @@
 import { DB_BLOGS } from "../db/DB";
+import { blogsCollection } from "../db/mongoDB";
 import { Blog } from "../types/blog-types";
 
 export const blogsRepository = {
-  getAll(): Blog[] {
-    return DB_BLOGS.blogs;
+  async getAll():Promise<Blog[]> {
+    return blogsCollection.find({}).toArray();
   },
 
-  createBlog(blogDto: Blog):Blog {
+  async createBlog(blogDto: Blog): Promise<Blog> {
     const newBlog = {
       id: Math.random().toString(36).substring(2),
       name: blogDto.name,
       description: blogDto.description,
       websiteUrl: blogDto.websiteUrl,
     };
-    DB_BLOGS.blogs.push(newBlog);
-    return newBlog;
+
+    return blogsCollection.insertOne(newBlog)
+    // DB_BLOGS.blogs.push(newBlog);
+    // return newBlog;
   },
 
   getBlog(id: string) {

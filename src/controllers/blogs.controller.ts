@@ -3,13 +3,13 @@ import { blogsRepository } from "../repository/blogsRepository";
 import { SETTINGS } from "../settings/settings";
 
 export const blogsController = {
-  getAllBlogs(req: Request, res: Response) {
-    const blogs = blogsRepository.getAll();
+  async getAllBlogs(req: Request, res: Response) {
+    const blogs = await blogsRepository.getAll();
     res.status(SETTINGS.HTTP_STATUS.OK).json(blogs);
   },
 
-  createBlog(req: Request, res: Response) {
-    const newBlog = blogsRepository.createBlog(req.body);
+  async createBlog(req: Request, res: Response) {
+    const newBlog = await blogsRepository.createBlog(req.body);    
     res.status(SETTINGS.HTTP_STATUS.GREATED).json(newBlog);
   },
 
