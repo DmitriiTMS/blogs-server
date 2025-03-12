@@ -1,41 +1,45 @@
+import { ObjectId } from "mongodb";
 import { DB_BLOGS } from "../db/DB";
 import { blogsCollection } from "../db/mongoDB";
 import { Blog } from "../types/blog-types";
 
 export const blogsRepository = {
-  async getAll():Promise<Blog[]> {
+  async getAll(): Promise<Blog[]> {
     return blogsCollection.find({}).toArray();
   },
 
   async createBlog(blogDto: Blog): Promise<Blog> {
     const newBlog = {
-      id: Math.random().toString(36).substring(2),
       name: blogDto.name,
       description: blogDto.description,
       websiteUrl: blogDto.websiteUrl,
+      createdAt: new Date(),
+      isMembership: false,
     };
 
-    return blogsCollection.insertOne(newBlog)
-    // DB_BLOGS.blogs.push(newBlog);
-    // return newBlog;
+    await blogsCollection.insertOne(newBlog);
+    return newBlog;
   },
 
-  getBlog(id: string) {
-    return DB_BLOGS.blogs.find((blog) => blog.id === id);
+  async getBlog(id: ObjectId) {
+    return await blogsCollection.findOne(id);
   },
 
-  updateBlog(id: string, blogDto: Blog) {
-    const blog = this.getBlog(id);
+  async updateBlog(id: ObjectId, blogDto: Blog): Promise<Blog> {
+    const blog = await this.getBlog(id);
     if (blog) {
-      blog.name = blogDto.name;
-      blog.description = blogDto.description;
-      blog.websiteUrl = blogDto.websiteUrl;
+      await blogsCollection.updateOne( { _id: id }, {
+        $set: {
+          name: blogDto.name,
+          description: blogDto.description,
+          websiteUrl: blogDto.websiteUrl,
+        },
+      });
     }
-
     return blog;
   },
 
-  deleteBlog(id: string) {
-    DB_BLOGS.blogs = DB_BLOGS.blogs.filter((blog) => blog.id !== id);
+  async deleteBlog(id: ObjectId) {
+    await blogsCollection.deleteOne({ _id: id })
   },
 };
