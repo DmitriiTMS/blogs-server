@@ -10,5 +10,5 @@ blogsRouter.get("/", blogsController.getAllBlogs);
 blogsRouter.post("/", authSuperAdminMiddleware,
     fieldValidationBlog, validationBlogResultMiddleware, blogsController.createBlog);
 blogsRouter.get("/:id", idValidationBlog, validationBlogResultMiddleware, blogsController.getBlogById);
-blogsRouter.put("/:id", authSuperAdminMiddleware, fieldValidationBlog, validationBlogResultMiddleware, blogsController.updateBlog);
-blogsRouter.delete("/:id", authSuperAdminMiddleware,  idValidationBlog, validationBlogResultMiddleware, blogsController.deleteBlog);
+blogsRouter.put("/:id", authSuperAdminMiddleware, idValidationBlog, fieldValidationBlog, validationBlogResultMiddleware, blogsController.updateBlog);
+blogsRouter.delete("/:id", authSuperAdminMiddleware, idValidationBlog, validationBlogResultMiddleware, blogsController.deleteBlog);

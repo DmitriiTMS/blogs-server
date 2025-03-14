@@ -25,7 +25,7 @@ export const blogsRepository = {
   },
 
   async updateBlog(id: ObjectId, blogDto: Blog): Promise<Blog> {
-    const blog = await this.getBlog(id);
+    const blog = await this.getBlog(new ObjectId(id));
     if (blog) {
       await blogsCollection.updateOne( { _id: id }, {
         $set: {
