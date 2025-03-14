@@ -5,6 +5,10 @@ export const SETTINGS = {
   PORT: process.env.PORT || 5000,
   DB_PATH: process.env.MONGO_URL || "mongodb://localhost:27017",
   DB_NAME: process.env.DB_NAME || "test",
+  COLLECTIONS: {
+    BLOGS: "/blogs",
+    POSTS: "/posts",
+  },
   PATH: {
     BLOGS: "/blogs",
     POSTS: "/posts",

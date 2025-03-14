@@ -1,9 +1,13 @@
+import { ObjectId } from "mongodb"
+
 export type Blog = {
-    id?: string,
+    id?: ObjectId,
     _id?: string,
     name: string,
     description: string,
     websiteUrl: string
+    createdAt: Date,
+    isMembership: boolean
 }
 
 
@@ -12,6 +16,6 @@ export type DBTypeBlogs = {
 }
 
 export type BlogDto = {
-    id: string,
+    _id: string,
     name: string
 }

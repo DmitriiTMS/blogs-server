@@ -1,4 +1,13 @@
-import { body } from "express-validator";
+import { body, param } from "express-validator";
+import { ObjectId } from "mongodb";
+
+export const idValidationBlog = param("id")
+    .custom((value) => {
+        if (!ObjectId.isValid(value)) {
+            throw new Error();
+        }
+        return true
+    }).withMessage('1111111111111111111');
 
 const nameValidation = body("name")
   .exists()
@@ -42,6 +51,7 @@ const websiteUrlValidation = body("websiteUrl")
   .withMessage('The WebsiteUrl must be a valid URL starting with https://');
 
 export const fieldValidationBlog = [
+  idValidationBlog,
   nameValidation,
   descriptionValidation,
   websiteUrlValidation,

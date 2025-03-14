@@ -1,44 +1,49 @@
+import { ObjectId } from "mongodb";
 import { DB_POSTS } from "../db/DB";
+import { postsCollection } from "../db/mongoDB";
 import { BlogDto } from "../types/blog-types";
 import { Post, PostDto } from "../types/post-types";
 
 
 export const postsRepository = {
-    getAll() {
-        return DB_POSTS.posts;
+    async getAll(): Promise<Post[]> {
+        return postsCollection.find({}).toArray();
     },
 
-    createPost(postDto: Post, blogDto: BlogDto) {
+    async createPost(postDto: Post, blogDto: BlogDto): Promise<Post> {
         const newPost = {
-            id: Math.random().toString(36).substring(2),
             title: postDto.title,
             shortDescription: postDto.shortDescription,
             content: postDto.content,
-            blogId: blogDto.id,
-            blogName: blogDto.name
+            blogId: blogDto._id,
+            blogName: blogDto.name,
+            createdAt: new Date(),
         };
-        DB_POSTS.posts.push(newPost);
+        await postsCollection.insertOne(newPost);
         return newPost;
     },
 
-    getPost(id: string) {
-        return DB_POSTS.posts.find((post) => post.id === id);
+    async getPost(id: ObjectId) {
+        return await postsCollection.findOne(id);
     },
 
-    updatePost(id: string, postDto: PostDto) {
-
-        const postFind = this.getPost(id)
+    async updatePost(id: ObjectId, postDto: PostDto): Promise<Post> {
+        const postFind: Post = await this.getPost(id)
 
         if (postFind) {
-            postFind.title = postDto.title
-            postFind.shortDescription = postDto.shortDescription
-            postFind.content = postDto.content
-            postFind.blogId = postDto.blogId
+            await postsCollection.updateOne({ _id: id }, {
+                $set: {
+                    title: postDto.title,
+                    shortDescription: postDto.shortDescription,
+                    content: postDto.content,
+                    blogId: postDto.blogId,
+                },
+            });
         }
         return postFind;
     },
 
-    deletePost(id: string) {
-        DB_POSTS.posts = DB_POSTS.posts.filter((post) => post.id !== id);
+    async deletePost(id: ObjectId) {
+        await postsCollection.deleteOne({ _id: id })
     },
 }

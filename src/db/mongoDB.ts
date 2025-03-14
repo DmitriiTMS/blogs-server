@@ -10,8 +10,8 @@ export const runDB = async (url: string): Promise<boolean> => {
   const db = client.db(SETTINGS.DB_NAME);
 
   // получение доступа к коллекциям
-  blogsCollection = db.collection(SETTINGS.PATH.BLOGS)
-  postsCollection = db.collection(SETTINGS.PATH.POSTS)
+  blogsCollection = db.collection(SETTINGS.COLLECTIONS.BLOGS)
+  postsCollection = db.collection(SETTINGS.COLLECTIONS.POSTS)
 
   try {
     await client.connect();

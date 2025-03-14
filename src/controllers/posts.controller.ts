@@ -3,39 +3,52 @@ import { postsRepository } from "../repository/postsRepository";
 import { SETTINGS } from "../settings/settings";
 import { blogsRepository } from "../repository/blogsRepository";
 import { ValidationError, validationResult } from "express-validator";
+import { BlogDto } from "../types/blog-types";
+import { ObjectId } from "mongodb";
 
 export const postsController = {
-    getAllPosts(req: Request, res: Response) {
-        const posts = postsRepository.getAll();
-        res.status(SETTINGS.HTTP_STATUS.OK).json(posts);
+    async getAllPosts(req: Request, res: Response) {
+        const posts = await postsRepository.getAll();
+        const resPosts = posts.map((post) => {
+            const { _id, ...resPost } = post;
+            return {
+                id: post._id,
+                ...resPost,
+            };
+        });
+        res.status(SETTINGS.HTTP_STATUS.OK).json(resPosts);
     },
 
-    createPost(req: Request, res: Response) {
+    async createPost(req: Request, res: Response) {
 
-        const { blogId } = req.body;
-        const blogById = blogsRepository.getBlog(blogId)
+        const { blogId }: { blogId: string } = req.body;
+        const idObjBlog = new ObjectId(blogId)
+        const blogById: BlogDto = await blogsRepository.getBlog(idObjBlog)
 
-        if(blogById) {
-            const newPost = postsRepository.createPost(req.body, blogById)
-            res.status(SETTINGS.HTTP_STATUS.GREATED).json(newPost);
+        if (blogById) {
+            const newPost = await postsRepository.createPost(req.body, blogById)
+            const { _id, ...resPost } = newPost;
+            res.status(SETTINGS.HTTP_STATUS.GREATED).json({ id: newPost._id, ...resPost });
             return
         }
-
     },
 
-    getPostById(req: Request, res: Response) {
-        const { id } = req.params;
-        const post = postsRepository.getPost(id);
+    async getPostById(req: Request, res: Response) {
+        const id = new ObjectId(req.params.id);
+        const post = await postsRepository.getPost(id);
         if (!post) {
             res.sendStatus(SETTINGS.HTTP_STATUS.NOT_FOUND);
             return;
         }
-        res.status(SETTINGS.HTTP_STATUS.OK).json(post);
+        const { _id, ...resPost } = post;
+        res.status(SETTINGS.HTTP_STATUS.OK).json({ id: post._id, ...resPost });
+        return
+
     },
 
-    updatePost(req: Request, res: Response) {
-        const { id } = req.params;
-        const post = postsRepository.updatePost(id, req.body)
+    async updatePost(req: Request, res: Response) {
+        const id = new ObjectId(req.params.id);
+        const post = await postsRepository.updatePost(id, req.body)
 
         if (!post) {
             res.sendStatus(SETTINGS.HTTP_STATUS.NOT_FOUND);
@@ -45,14 +58,14 @@ export const postsController = {
         res.sendStatus(SETTINGS.HTTP_STATUS.NO_CONTENT);
     },
 
-    deletePost(req: Request, res: Response) {
-        const { id } = req.params;
-        const post = postsRepository.getPost(id)
+    async deletePost(req: Request, res: Response) {
+        const id = new ObjectId(req.params.id);
+        const post = await postsRepository.getPost(id)
         if (!post) {
             res.sendStatus(SETTINGS.HTTP_STATUS.NOT_FOUND);
             return;
         } else {
-            postsRepository.deletePost(id)
+            await postsRepository.deletePost(id)
             res.sendStatus(SETTINGS.HTTP_STATUS.NO_CONTENT);
             return;
         }

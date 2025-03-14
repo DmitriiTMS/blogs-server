@@ -1,5 +1,14 @@
-import { body } from "express-validator";
+import { body, param } from "express-validator";
 import { blogsRepository } from "../repository/blogsRepository";
+import { ObjectId } from "mongodb";
+
+export const idValidation = param("id")
+    .custom((value) => {
+        if (!ObjectId.isValid(value)) {
+            throw new Error();
+        }
+        return true
+    }).withMessage('1111111111111111111 post');
 
 const titleValidation = body("title")
     .exists()
@@ -44,19 +53,22 @@ const blogIdValidation = body("blogId")
     .withMessage("BlogId cannot be empty")
     .isString()
     .withMessage("The BlogId field must be a string")
-    .custom((value) => {        
+    .custom((value) => {
+        if(!ObjectId.isValid(value)) {
+            throw new Error();
+        }
         const blogExists = blogsRepository.getBlog(value);
         if (!blogExists) {
             throw new Error();
         }
         return true
-    }).withMessage('BlogId Not found');
+    }).withMessage('BlogId Not found or no ObjectId');
 
 
 export const fieldValidationPost = [
     titleValidation,
     shortDescriptionValidation,
     contentValidation,
-    blogIdValidation
+    blogIdValidation,
 ];
 
