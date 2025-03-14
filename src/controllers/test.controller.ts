@@ -4,7 +4,7 @@ import { blogsCollection, postsCollection } from "../db/mongoDB";
 
 
 export const clearDB = async (req: Request, res: Response) => {
-    await blogsCollection.drop()
-    await postsCollection.drop()
+    await blogsCollection.deleteMany({});
+    await postsCollection.deleteMany({});
     res.status(SETTINGS.HTTP_STATUS.NO_CONTENT).json()
 };

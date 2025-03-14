@@ -7,7 +7,7 @@ export const idValidationBlog = param("id")
             throw new Error();
         }
         return true
-    }).withMessage('1111111111111111111');
+    }).withMessage('ID not type ObjectId blog');
 
 const nameValidation = body("name")
   .exists()
@@ -51,7 +51,6 @@ const websiteUrlValidation = body("websiteUrl")
   .withMessage('The WebsiteUrl must be a valid URL starting with https://');
 
 export const fieldValidationBlog = [
-  idValidationBlog,
   nameValidation,
   descriptionValidation,
   websiteUrlValidation,

@@ -8,7 +8,7 @@ export const idValidation = param("id")
             throw new Error();
         }
         return true
-    }).withMessage('1111111111111111111 post');
+    }).withMessage('ID not type ObjectId post');
 
 const titleValidation = body("title")
     .exists()
