@@ -21,9 +21,8 @@ export const postsController = {
 
     async createPost(req: Request, res: Response) {
 
-        const { blogId }: { blogId: string } = req.body;
-        const idObjBlog = new ObjectId(blogId)
-        const blogById: BlogDto = await blogsRepository.getBlog(idObjBlog)
+        const { blogId } = req.body;
+        const blogById: BlogDto = await blogsRepository.getBlog(blogId)
 
         if (blogById) {
             const newPost = await postsRepository.createPost(req.body, blogById)

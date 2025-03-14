@@ -30,6 +30,7 @@ export const authSuperAdminMiddleware = (
 
     if (username !== ADMIN_USERNAME || password !== ADMIN_PASSWORD) {
         res.sendStatus(SETTINGS.HTTP_STATUS.UNAUTHORIZATION);
+        return;
     }
 
     next()

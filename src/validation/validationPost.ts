@@ -53,11 +53,11 @@ const blogIdValidation = body("blogId")
     .withMessage("BlogId cannot be empty")
     .isString()
     .withMessage("The BlogId field must be a string")
-    .custom((value) => {
-        if(!ObjectId.isValid(value)) {
+    .custom(async (value) => {
+        if (!ObjectId.isValid(value)) {
             throw new Error();
         }
-        const blogExists = blogsRepository.getBlog(value);
+        const blogExists = await blogsRepository.getBlog(value);
         if (!blogExists) {
             throw new Error();
         }
