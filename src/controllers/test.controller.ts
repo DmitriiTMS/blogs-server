@@ -3,8 +3,8 @@ import { SETTINGS } from "../settings/settings";
 import { blogsCollection, postsCollection } from "../db/mongoDB";
 
 
-export const clearDB = (req: Request, res: Response) => {
-    blogsCollection.drop()
-    postsCollection.drop()
+export const clearDB = async (req: Request, res: Response) => {
+    await blogsCollection.drop()
+    await postsCollection.drop()
     res.status(SETTINGS.HTTP_STATUS.NO_CONTENT).json()
 };
