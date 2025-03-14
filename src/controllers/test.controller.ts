@@ -1,9 +1,10 @@
 import { Request, Response } from "express";
 import { SETTINGS } from "../settings/settings";
-import { DB_BLOGS } from "../db/DB";
+import { blogsCollection, postsCollection } from "../db/mongoDB";
 
 
 export const clearDB = (req: Request, res: Response) => {
-    DB_BLOGS.blogs = []
+    blogsCollection.drop()
+    postsCollection.drop()
     res.status(SETTINGS.HTTP_STATUS.NO_CONTENT).json()
 };
