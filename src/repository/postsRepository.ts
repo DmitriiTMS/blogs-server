@@ -23,7 +23,7 @@ export const postsRepository = {
     },
 
     async getPost(id: ObjectId): Promise<Post> {
-        return await postsCollection.findOne(id);
+        return await postsCollection.findOne({_id: id});
     },
 
     async updatePost(id: ObjectId, postDto: PostDto): Promise<Post> {

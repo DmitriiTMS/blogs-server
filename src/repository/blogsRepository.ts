@@ -21,7 +21,7 @@ export const blogsRepository = {
   },
 
   async getBlog(id: ObjectId): Promise<Blog> {
-    return await blogsCollection.findOne(id);
+    return await blogsCollection.findOne({_id: id});
   },
 
   async updateBlog(id: ObjectId, blogDto: BlogDto): Promise<Blog> {

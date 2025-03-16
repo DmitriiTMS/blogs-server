@@ -4,6 +4,8 @@ import { SETTINGS } from "../settings/settings";
 export let blogsCollection: any;
 export let postsCollection: any;
 
+
+
 // проверка подключения к бд
 export const runDB = async (url: string): Promise<boolean> => {
   const client: MongoClient = new MongoClient(url);
@@ -23,3 +25,13 @@ export const runDB = async (url: string): Promise<boolean> => {
     return false;
   }
 };
+
+export async function closeDB(url: string) {
+  const client: MongoClient = new MongoClient(url);
+  try {
+      await client.close();
+      console.log('MongoDB connection closed');
+  } catch (err) {
+      console.error('Failed to close MongoDB connection', err);
+  }
+}
