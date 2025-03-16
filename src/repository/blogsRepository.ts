@@ -1,13 +1,13 @@
 import { ObjectId } from "mongodb";
 import { blogsCollection } from "../db/mongoDB";
-import { Blog } from "../types/blog-types";
+import { Blog, BlogClient, BlogDto } from "../types/blog-types";
 
 export const blogsRepository = {
   async getAll(): Promise<Blog[]> {
     return blogsCollection.find({}).toArray();
   },
 
-  async createBlog(blogDto: Blog): Promise<Blog> {
+  async createBlog(blogDto: BlogDto): Promise<BlogClient> {
     const newBlog = {
       name: blogDto.name,
       description: blogDto.description,
@@ -20,14 +20,14 @@ export const blogsRepository = {
     return newBlog;
   },
 
-  async getBlog(id: ObjectId) {
-    return await blogsCollection.findOne(new ObjectId(id));
+  async getBlog(id: ObjectId): Promise<Blog> {
+    return await blogsCollection.findOne(id);
   },
 
-  async updateBlog(id: ObjectId, blogDto: Blog): Promise<Blog> {
-    const blog = await this.getBlog(new ObjectId(id));
+  async updateBlog(id: ObjectId, blogDto: BlogDto): Promise<Blog> {
+    const blog = await this.getBlog(id);
     if (blog) {
-      await blogsCollection.updateOne( { _id: id }, {
+      await blogsCollection.updateOne({ _id: id }, {
         $set: {
           name: blogDto.name,
           description: blogDto.description,
@@ -38,7 +38,7 @@ export const blogsRepository = {
     return blog;
   },
 
-  async deleteBlog(id: ObjectId) {
-    await blogsCollection.deleteOne({ _id: id })
+  async deleteBlog(id: ObjectId): Promise<Blog> {
+    return await blogsCollection.deleteOne({ _id: id });
   },
 };

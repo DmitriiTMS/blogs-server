@@ -1,8 +1,7 @@
 import { ObjectId } from "mongodb"
 
 export type Post = {
-    _id?: ObjectId
-    id?: string,
+    _id: ObjectId
     title: string,
     shortDescription: string,
     content: string,
@@ -10,6 +9,17 @@ export type Post = {
     blogName: string,
     createdAt: Date,
 }
+
+export type PostClient = {
+    _id?: ObjectId
+    title: string,
+    shortDescription: string,
+    content: string,
+    blogId: string,
+    blogName: string,
+    createdAt: Date,
+}
+
 
 
 export type DBTypePosts = {

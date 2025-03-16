@@ -13,7 +13,7 @@ postsRouter.get("/", postsController.getAllPosts);
 postsRouter.post("/", authSuperAdminMiddleware,
         fieldValidationPost, validationPostResultMiddleware, postsController.createPost);
 postsRouter.get("/:id", idValidation, validationPostResultMiddleware, postsController.getPostById);
-postsRouter.put("/:id", authSuperAdminMiddleware,
+postsRouter.put("/:id", authSuperAdminMiddleware, idValidation,
         fieldValidationPost, validationPostResultMiddleware, postsController.updatePost);
 postsRouter.delete("/:id", idValidation, validationPostResultMiddleware, authSuperAdminMiddleware, postsController.deletePost);
 

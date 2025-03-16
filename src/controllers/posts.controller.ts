@@ -2,8 +2,7 @@ import { Request, Response } from "express";
 import { postsRepository } from "../repository/postsRepository";
 import { SETTINGS } from "../settings/settings";
 import { blogsRepository } from "../repository/blogsRepository";
-import { ValidationError, validationResult } from "express-validator";
-import { BlogDto } from "../types/blog-types";
+import { Blog } from "../types/blog-types";
 import { ObjectId } from "mongodb";
 
 export const postsController = {
@@ -20,12 +19,12 @@ export const postsController = {
     },
 
     async createPost(req: Request, res: Response) {
-
-        const { blogId } = req.body;
-        const blogById: BlogDto = await blogsRepository.getBlog(blogId)
+        const { blogId }: { blogId: string } = req.body;
+        const blogById: Blog = await blogsRepository.getBlog(new ObjectId(blogId))
+        const { description, websiteUrl, createdAt, isMembership, ...resBlogById } = blogById
 
         if (blogById) {
-            const newPost = await postsRepository.createPost(req.body, blogById)
+            const newPost = await postsRepository.createPost(req.body, resBlogById)
             const { _id, ...resPost } = newPost;
             res.status(SETTINGS.HTTP_STATUS.GREATED).json({ id: newPost._id, ...resPost });
             return

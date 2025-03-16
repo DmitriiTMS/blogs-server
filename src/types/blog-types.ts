@@ -1,8 +1,7 @@
 import { ObjectId } from "mongodb"
 
 export type Blog = {
-    id?: ObjectId,
-    _id?: string,
+    _id: ObjectId,
     name: string,
     description: string,
     websiteUrl: string
@@ -10,12 +9,26 @@ export type Blog = {
     isMembership: boolean
 }
 
+export type BlogClient = {
+    _id?: ObjectId,
+    name: string,
+    description: string,
+    websiteUrl: string
+    createdAt: Date,
+    isMembership: boolean
+}
 
 export type DBTypeBlogs = {
     blogs: Blog[]
 }
 
 export type BlogDto = {
-    _id: string,
-    name: string
+    name: string,
+    description: string,
+    websiteUrl: string
+}
+
+export type BlogByIdDto = {
+    _id: ObjectId,
+    name: string,
 }

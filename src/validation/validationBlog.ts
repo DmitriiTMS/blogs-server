@@ -4,10 +4,10 @@ import { ObjectId } from "mongodb";
 export const idValidationBlog = param("id")
     .custom((value) => {
         if (!ObjectId.isValid(value)) {
-            throw new Error();
+            throw new Error('ID not type ObjectId blog');
         }
         return true
-    }).withMessage('ID not type ObjectId blog');
+    })
 
 const nameValidation = body("name")
   .exists()

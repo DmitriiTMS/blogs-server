@@ -1,8 +1,7 @@
 import { ObjectId } from "mongodb";
-import { DB_POSTS } from "../db/DB";
 import { postsCollection } from "../db/mongoDB";
-import { BlogDto } from "../types/blog-types";
-import { Post, PostDto } from "../types/post-types";
+import { BlogByIdDto } from "../types/blog-types";
+import { Post, PostClient, PostDto } from "../types/post-types";
 
 
 export const postsRepository = {
@@ -10,12 +9,12 @@ export const postsRepository = {
         return postsCollection.find({}).toArray();
     },
 
-    async createPost(postDto: Post, blogDto: BlogDto): Promise<Post> {
+    async createPost(postDto: Post, blogDto: BlogByIdDto): Promise<PostClient> {
         const newPost = {
             title: postDto.title,
             shortDescription: postDto.shortDescription,
             content: postDto.content,
-            blogId: blogDto._id,
+            blogId: String(blogDto._id),
             blogName: blogDto.name,
             createdAt: new Date(),
         };
@@ -23,12 +22,12 @@ export const postsRepository = {
         return newPost;
     },
 
-    async getPost(id: ObjectId) {
+    async getPost(id: ObjectId): Promise<Post> {
         return await postsCollection.findOne(id);
     },
 
     async updatePost(id: ObjectId, postDto: PostDto): Promise<Post> {
-        const postFind: Post = await this.getPost(id)
+        const postFind = await this.getPost(id)
 
         if (postFind) {
             await postsCollection.updateOne({ _id: id }, {
@@ -43,7 +42,7 @@ export const postsRepository = {
         return postFind;
     },
 
-    async deletePost(id: ObjectId) {
-        await postsCollection.deleteOne({ _id: id })
+    async deletePost(id: ObjectId): Promise<Post> {
+        return await postsCollection.deleteOne({ _id: id })
     },
 }
