@@ -3,28 +3,15 @@ import { app } from '../src/app';
 import { SETTINGS } from '../src/settings/settings';
 import { MongoMemoryServer } from 'mongodb-memory-server';
 import { MongoClient } from 'mongodb';
+import { closeDB, runDB } from '../src/db/mongoDB';
 
 describe('/blogs', () => {
 
-    let mongoServer: MongoMemoryServer;
-    let client: MongoClient;
-
-    let blogsCollection: any;
-    let postsCollection: any;
-
-
     beforeAll(async () => {
-        mongoServer = await MongoMemoryServer.create()
+        const mongoServer = await MongoMemoryServer.create()
         const uri = mongoServer.getUri()
-        client = new MongoClient(uri)
-
-        const db = client.db('blogs')
-        // blogsCollection = db.collection(SETTINGS.COLLECTIONS.BLOGS)
-        // postsCollection = db.collection(SETTINGS.COLLECTIONS.POSTS)
-
-        // // Очищаем коллекции перед тестами
-        // await blogsCollection.deleteMany({});
-        // await postsCollection.deleteMany({});
+        await runDB(uri)
+        await request(app).delete('/testing/all-data').expect(204)
     })
 
     it('should create', async () => {
@@ -34,11 +21,11 @@ describe('/blogs', () => {
 
         console.log(res.status);
         console.log(res.body);
-        expect(res.body.length).toBe(0)
+        expect(res.body.items.length).toBe(0)
     })
 
     afterAll(async () => {
-        await mongoServer.stop()
+        await closeDB()
     })
 
 })

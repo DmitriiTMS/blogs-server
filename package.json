@@ -13,7 +13,7 @@
   "scripts": {
     "watch": "tsc -w",
     "dev": "nodemon --inspect dist/index.js",
-    "jest": "jest -i",
+    "jest": "jest -i --detectOpenHandles --forceExit",
     "jest:coverage": "jest -i --coverage"
   },
   "devDependencies": {

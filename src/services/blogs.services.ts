@@ -15,6 +15,7 @@ export const blogsServices = {
         const resQueryDto = { searchNameTerm, sortBy, sortDirection, pageNumber, pageSize }
 
         const blogs = await blogsRepository.getAll(resQueryDto);
+        
         const totalCount = await blogsCollection.countDocuments();
         const pagesCount = Math.ceil(totalCount / pageSize);
 
@@ -27,10 +28,26 @@ export const blogsServices = {
         });
         const resBlogItems = {
             pagesCount: +pagesCount,
-            page: +pageNumber,
-            pageSize: +pageSize,
+            page: totalCount ? +pageNumber : 0,
+            pageSize: totalCount ? +pageSize : 0,
             totalCount: +totalCount,
             items: [...resBlogs]
+        }
+        return resBlogItems
+    },
+
+    async getOneBlogPost(id: ObjectId, filters:BlogReqQueryFilters ) {
+        const blog = await blogsRepository.getBlog(id);
+        const { _id, ...resBlog } = blog;
+        const resBlogItems = {
+            pagesCount: 0,
+            page: 0,
+            pageSize: 0,
+            totalCount: 0,
+            items: {
+                id: _id,
+                ...resBlog
+            }
         }
         return resBlogItems
     },

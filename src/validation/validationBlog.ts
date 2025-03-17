@@ -27,8 +27,6 @@ const pageSizeValidationQuery = query("pageSize")
   .withMessage("Page pageSize must be a number");
 
 
-
-
 export const idValidationBlog = param("id")
   .custom((value) => {
     if (!ObjectId.isValid(value)) {
@@ -86,6 +84,13 @@ export const fieldValidationBlog = [
 
 export const fieldValidationBlogQuery = [
   searchNameTermValidationQuery,
+  sortByValidationQuery,
+  sortDirectionValidationQuery,
+  pageNumberValidationQuery,
+  pageSizeValidationQuery
+]
+
+export const fieldValidationBlogQueryNotSearchName = [
   sortByValidationQuery,
   sortDirectionValidationQuery,
   pageNumberValidationQuery,

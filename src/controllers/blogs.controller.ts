@@ -50,6 +50,26 @@ export const blogsController = {
     res.status(SETTINGS.HTTP_STATUS.OK).json({ id: blog._id, ...resBlog });
   },
 
+  async getBlogByIdPost(req: Request, res: Response) {
+
+    const { searchNameTerm, sortBy, sortDirection, pageNumber, pageSize } = req.query;
+    const filters: BlogReqQueryFilters = {
+      searchNameTerm: String(searchNameTerm),
+      sortBy: String(sortBy),
+      sortDirection: String(sortDirection),
+      pageNumber: Number(pageNumber),  
+      pageSize: Number(pageSize)       
+  };
+
+    const id = new ObjectId(req.params.id);
+    const blog = await blogsServices.getOneBlogPost(id, filters);
+    if (!blog) {
+      res.sendStatus(SETTINGS.HTTP_STATUS.NOT_FOUND);
+      return;
+    }
+    res.status(SETTINGS.HTTP_STATUS.OK).json({ ...blog });
+  },
+
   async updateBlog(req: Request, res: Response) {
     const id = new ObjectId(req.params.id);
     const blog = await blogsRepository.updateBlog(id, req.body);

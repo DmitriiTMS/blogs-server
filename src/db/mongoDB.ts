@@ -4,32 +4,31 @@ import { SETTINGS } from "../settings/settings";
 export let blogsCollection: any;
 export let postsCollection: any;
 
-
+export let mongoClient: MongoClient;
 
 // проверка подключения к бд
 export const runDB = async (url: string): Promise<boolean> => {
-  const client: MongoClient = new MongoClient(url);
-  const db = client.db(SETTINGS.DB_NAME);
+  mongoClient = new MongoClient(url);
+  const db = mongoClient.db(SETTINGS.DB_NAME);
 
   // получение доступа к коллекциям
   blogsCollection = db.collection(SETTINGS.COLLECTIONS.BLOGS)
   postsCollection = db.collection(SETTINGS.COLLECTIONS.POSTS)
 
   try {
-    await client.connect();
+    await mongoClient.connect();
     console.log("connected to db");
     return true;
   } catch (e) {
     console.log(e);
-    await client.close();
+    await mongoClient.close();
     return false;
   }
 };
 
-export async function closeDB(url: string) {
-  const client: MongoClient = new MongoClient(url);
+export async function closeDB() {  
   try {
-      await client.close();
+      await mongoClient.close();
       console.log('MongoDB connection closed');
   } catch (err) {
       console.error('Failed to close MongoDB connection', err);
