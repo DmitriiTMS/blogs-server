@@ -1,5 +1,13 @@
 import { ObjectId } from "mongodb"
 
+export type BlogReqQueryFilters = {
+    searchNameTerm: string,
+    sortBy: string,
+    sortDirection: string,
+    pageNumber: number,
+    pageSize: number
+}
+
 export type BlogItems = {
     pagesCount: number,
     page: number,

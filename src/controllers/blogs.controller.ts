@@ -3,10 +3,20 @@ import { blogsRepository } from "../repository/blogsRepository";
 import { SETTINGS } from "../settings/settings";
 import { ObjectId } from "mongodb";
 import { blogsServices } from "../services/blogs.services";
+import { BlogReqQueryFilters } from "../types/blog-types";
 
 export const blogsController = {
   async getAllBlogs(req: Request, res: Response) {
-    const blogsItems = await blogsServices.getAll();
+    const { searchNameTerm, sortBy, sortDirection, pageNumber, pageSize } = req.query;
+    const filters: BlogReqQueryFilters = {
+      searchNameTerm: String(searchNameTerm),
+      sortBy: String(sortBy),
+      sortDirection: String(sortDirection),
+      pageNumber: Number(pageNumber),  
+      pageSize: Number(pageSize)       
+  };
+
+    const blogsItems = await blogsServices.getAll(filters);
     res.status(SETTINGS.HTTP_STATUS.OK).json(blogsItems);
   },
 

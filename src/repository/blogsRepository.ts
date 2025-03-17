@@ -1,10 +1,17 @@
 import { ObjectId } from "mongodb";
 import { blogsCollection, postsCollection } from "../db/mongoDB";
-import { Blog, BlogClient, BlogDto } from "../types/blog-types";
+import { Blog, BlogClient, BlogDto, BlogReqQueryFilters } from "../types/blog-types";
 
 export const blogsRepository = {
-  async getAll(): Promise<Blog[]> {
-    return blogsCollection.find({}).toArray();
+  async getAll(queryFilters: BlogReqQueryFilters): Promise<Blog[]> {
+
+    return blogsCollection.find({
+      name: { $regex: queryFilters.searchNameTerm, $options: 'i' },
+    })
+      .sort({ [queryFilters.sortBy]: queryFilters.sortDirection === 'asc' ? -1 : 1 })
+      .skip((+queryFilters.pageNumber - 1) * +queryFilters.pageSize)
+      .limit(+queryFilters.pageSize)
+      .toArray();
   },
 
   async createBlog(blogDto: BlogDto): Promise<BlogClient> {

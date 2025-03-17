@@ -1,13 +1,14 @@
 import { Router } from "express";
 import { blogsController } from "../controllers/blogs.controller";
-import { fieldValidationBlog, idValidationBlog } from "../validation/validationBlog";
+import { fieldValidationBlog, idValidationBlog, fieldValidationBlogQuery } from "../validation/validationBlog";
 import { validationBlogResultMiddleware } from "../middlewares/validationBlogResultMidleware";
 import { authSuperAdminMiddleware } from "../middlewares/authSuperAdminMiddleware";
 import { fieldValidationPostNotBlogId } from "../validation/validationPost";
 
 export const blogsRouter = Router();
 
-blogsRouter.get("/", blogsController.getAllBlogs);
+blogsRouter.get("/", fieldValidationBlogQuery, validationBlogResultMiddleware, blogsController.getAllBlogs);
+
 blogsRouter.post("/", authSuperAdminMiddleware,
     fieldValidationBlog, validationBlogResultMiddleware, blogsController.createBlog);
 

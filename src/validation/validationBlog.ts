@@ -1,13 +1,41 @@
-import { body, param } from "express-validator";
+import { body, param, query } from "express-validator";
 import { ObjectId } from "mongodb";
 
+const searchNameTermValidationQuery = query("searchNameTerm")
+  .optional()
+  .isString()
+  .withMessage("The SearchNameTerm field must be a string")
+
+const sortByValidationQuery = query("sortBy")
+  .optional()
+  .isString()
+  .withMessage("The sortBy field must be a string")
+
+const sortDirectionValidationQuery = query("sortDirection")
+  .optional()
+  .isIn(['asc', 'desc', ''])
+  .withMessage("The sortBy field must be a 'asc' or'desc")
+
+const pageNumberValidationQuery = query("pageNumber")
+  .optional()
+  .isInt({ min: 0, max: 4294967295 })
+  .withMessage("Page pageNumber must be a number");
+
+const pageSizeValidationQuery = query("pageSize")
+  .optional()
+  .isInt({ min: 0, max: 4294967295 })
+  .withMessage("Page pageSize must be a number");
+
+
+
+
 export const idValidationBlog = param("id")
-    .custom((value) => {
-        if (!ObjectId.isValid(value)) {
-            throw new Error('ID not type ObjectId blog');
-        }
-        return true
-    });
+  .custom((value) => {
+    if (!ObjectId.isValid(value)) {
+      throw new Error('ID not type ObjectId blog');
+    }
+    return true
+  });
 
 const nameValidation = body("name")
   .exists()
@@ -55,3 +83,11 @@ export const fieldValidationBlog = [
   descriptionValidation,
   websiteUrlValidation,
 ];
+
+export const fieldValidationBlogQuery = [
+  searchNameTermValidationQuery,
+  sortByValidationQuery,
+  sortDirectionValidationQuery,
+  pageNumberValidationQuery,
+  pageSizeValidationQuery
+]
