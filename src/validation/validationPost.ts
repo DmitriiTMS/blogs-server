@@ -2,14 +2,13 @@ import { body, param } from "express-validator";
 import { blogsRepository } from "../repository/blogsRepository";
 import { ObjectId } from "mongodb";
 
-export const idValidation = param("id")
+export const idValidationPost = param("id")
     .custom((value) => {
         if (!ObjectId.isValid(value)) {
-            throw new Error();
+            throw new Error("ID not type ObjectId post");
         }
         return true;
     })
-    .withMessage("ID not type ObjectId post");
 
 const titleValidation = body("title")
     .exists()
@@ -35,7 +34,7 @@ const shortDescriptionValidation = body("shortDescription")
         "The ShortDescription field must be a maximum of 100 characters"
     );
 
-const contentValidation = body("content")
+export const contentValidation = body("content")
     .exists()
     .withMessage("Content is required")
     .trim()
@@ -47,7 +46,7 @@ const contentValidation = body("content")
     .withMessage("The Content field must be a maximum of 1000 characters");
 
 
-const blogIdValidation = body("blogId")
+export const blogIdValidation = body("blogId")
     .exists()
     .withMessage("BlogId is required")
     .trim()
@@ -72,3 +71,10 @@ export const fieldValidationPost = [
     contentValidation,
     blogIdValidation,
 ];
+
+export const fieldValidationPostNotBlogId = [
+    titleValidation,
+    shortDescriptionValidation,
+    contentValidation,
+];
+

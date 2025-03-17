@@ -1,5 +1,5 @@
 import { ObjectId } from "mongodb";
-import { blogsCollection } from "../db/mongoDB";
+import { blogsCollection, postsCollection } from "../db/mongoDB";
 import { Blog, BlogClient, BlogDto } from "../types/blog-types";
 
 export const blogsRepository = {
@@ -20,8 +20,13 @@ export const blogsRepository = {
     return newBlog;
   },
 
+  async createPostWithBlogId(newPost: any) {
+    await postsCollection.insertOne(newPost);
+    return newPost;
+  },
+
   async getBlog(id: ObjectId): Promise<Blog> {
-    return await blogsCollection.findOne({_id: id});
+    return await blogsCollection.findOne({ _id: id });
   },
 
   async updateBlog(id: ObjectId, blogDto: BlogDto): Promise<Blog> {

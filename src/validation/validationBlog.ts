@@ -7,7 +7,7 @@ export const idValidationBlog = param("id")
             throw new Error('ID not type ObjectId blog');
         }
         return true
-    })
+    });
 
 const nameValidation = body("name")
   .exists()
