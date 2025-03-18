@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { blogsController } from "../controllers/blogs.controller";
-import { fieldValidationBlog, idValidationBlog, fieldValidationBlogQuery, fieldValidationBlogQueryNotSearchName } from "../validation/validationBlog";
+import { fieldValidationBlog, idValidationBlog, fieldValidationBlogQuery, fieldValidationBlogQueryNotSearchName, idValidationBlogID } from "../validation/validationBlog";
 import { validationBlogResultMiddleware } from "../middlewares/validationBlogResultMidleware";
 import { authSuperAdminMiddleware } from "../middlewares/authSuperAdminMiddleware";
 import { blogIdValidation, fieldValidationPostNotBlogId } from "../validation/validationPost";
@@ -12,8 +12,8 @@ blogsRouter.get("/", fieldValidationBlogQuery, validationBlogResultMiddleware, b
 blogsRouter.post("/", authSuperAdminMiddleware,
     fieldValidationBlog, validationBlogResultMiddleware, blogsController.createBlog);
 
-blogsRouter.post("/:id/posts", authSuperAdminMiddleware,
-                            idValidationBlog,
+blogsRouter.post("/:blogId/posts", authSuperAdminMiddleware,
+                            idValidationBlogID,
                             fieldValidationPostNotBlogId,
                             validationBlogResultMiddleware,
                             blogsController.createPostWithBlogsId
@@ -21,7 +21,7 @@ blogsRouter.post("/:id/posts", authSuperAdminMiddleware,
 
 blogsRouter.get("/:id", idValidationBlog, validationBlogResultMiddleware, blogsController.getBlogById);
 
-blogsRouter.get("/:id/posts", idValidationBlog, fieldValidationBlogQueryNotSearchName,
+blogsRouter.get("/:blogId/posts", idValidationBlogID, fieldValidationBlogQueryNotSearchName,
                                 validationBlogResultMiddleware, blogsController.getBlogByIdPost);
 
 

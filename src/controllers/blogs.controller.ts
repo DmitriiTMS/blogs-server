@@ -2,19 +2,23 @@ import { Request, Response } from "express";
 import { blogsRepository } from "../repository/blogsRepository";
 import { SETTINGS } from "../settings/settings";
 import { ObjectId } from "mongodb";
-import { blogsServices } from "../services/blogs.services";
-import { BlogReqQueryFilters } from "../types/blog-types";
+import { blogsServices } from "../services/blogs.service";
+import {
+  BlogReqQueryFilters,
+  BlogReqQueryFiltersPage,
+} from "../types/blog-types";
 
 export const blogsController = {
   async getAllBlogs(req: Request, res: Response) {
-    const { searchNameTerm, sortBy, sortDirection, pageNumber, pageSize } = req.query;
+    const { searchNameTerm, sortBy, sortDirection, pageNumber, pageSize } =
+      req.query;
     const filters: BlogReqQueryFilters = {
       searchNameTerm: String(searchNameTerm),
       sortBy: String(sortBy),
       sortDirection: String(sortDirection),
-      pageNumber: Number(pageNumber),  
-      pageSize: Number(pageSize)       
-  };
+      pageNumber: Number(pageNumber),
+      pageSize: Number(pageSize),
+    };
 
     const blogsItems = await blogsServices.getAll(filters);
     res.status(SETTINGS.HTTP_STATUS.OK).json(blogsItems);
@@ -29,8 +33,8 @@ export const blogsController = {
   },
 
   async createPostWithBlogsId(req: Request, res: Response) {
-    const id = new ObjectId(req.params.id);
-    const newPost = await blogsServices.createPostWithBlogId(req.body, id)
+    const id = new ObjectId(req.params.blogId);
+    const newPost = await blogsServices.createPostWithBlogId(req.body, id);
     if (!newPost) {
       res.sendStatus(SETTINGS.HTTP_STATUS.NOT_FOUND);
       return;
@@ -51,17 +55,15 @@ export const blogsController = {
   },
 
   async getBlogByIdPost(req: Request, res: Response) {
-
-    const { searchNameTerm, sortBy, sortDirection, pageNumber, pageSize } = req.query;
-    const filters: BlogReqQueryFilters = {
-      searchNameTerm: String(searchNameTerm),
+    const { pageNumber, pageSize, sortBy,  sortDirection} = req.query;
+    const filters: BlogReqQueryFiltersPage = {
       sortBy: String(sortBy),
       sortDirection: String(sortDirection),
-      pageNumber: Number(pageNumber),  
-      pageSize: Number(pageSize)       
-  };
+      pageNumber: Number(pageNumber),
+      pageSize: Number(pageSize),
+    };
 
-    const id = new ObjectId(req.params.id);
+    const id = new ObjectId(req.params.blogId);
     const blog = await blogsServices.getOneBlogPost(id, filters);
     if (!blog) {
       res.sendStatus(SETTINGS.HTTP_STATUS.NOT_FOUND);

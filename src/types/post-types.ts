@@ -32,3 +32,10 @@ export type PostDto = {
     content: string,
     blogId: ObjectId,
 }
+
+export type PostReqQueryFilters = {
+    sortBy: string,
+    sortDirection: string,
+    pageNumber: number,
+    pageSize: number
+}

@@ -8,6 +8,13 @@ export type BlogReqQueryFilters = {
     pageSize: number
 }
 
+export type BlogReqQueryFiltersPage = {
+    sortBy: string,
+    sortDirection: string,
+    pageNumber: number,
+    pageSize: number
+}
+
 export type BlogItems = {
     pagesCount: number,
     page: number,

@@ -35,6 +35,14 @@ export const idValidationBlog = param("id")
     return true
   });
 
+  export const idValidationBlogID = param("blogId")
+  .custom((value) => {
+    if (!ObjectId.isValid(value)) {
+      throw new Error('BLOGID not type ObjectId blog');
+    }
+    return true
+  });
+
 const nameValidation = body("name")
   .exists()
   .withMessage("Name is required")
