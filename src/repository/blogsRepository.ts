@@ -8,7 +8,7 @@ export const blogsRepository = {
     return blogsCollection.find({
       name: { $regex: queryFilters.searchNameTerm, $options: 'i' },
     })
-      .sort({ [queryFilters.sortBy]: queryFilters.sortDirection === 'asc' ? -1 : 1 })
+      .sort({ [queryFilters.sortBy]: queryFilters.sortDirection === 'asc' ? 1 : -1 })
       .skip((+queryFilters.pageNumber - 1) * +queryFilters.pageSize)
       .limit(+queryFilters.pageSize)
       .toArray();

@@ -13,7 +13,7 @@ export const postsRepository = {
     return postsCollection
       .find({})
       .sort({
-        [queryFilters.sortBy]: queryFilters.sortDirection === "asc" ? -1 : 1,
+        [queryFilters.sortBy]: queryFilters.sortDirection === "asc" ? 1 : -1,
       })
       .skip((+queryFilters.pageNumber - 1) * +queryFilters.pageSize)
       .limit(+queryFilters.pageSize)
@@ -23,7 +23,7 @@ export const postsRepository = {
   async getOneWithBlogId(queryFilters: PostReqQueryFilters, id: ObjectId): Promise<Post[]> {
     return await postsCollection
     .find({ blogId: id.toString() })
-    .sort({ [queryFilters.sortBy]: queryFilters.sortDirection === 'asc' ? -1 : 1 })
+    .sort({ [queryFilters.sortBy]: queryFilters.sortDirection === 'asc' ? 1 : -1 })
     .skip((queryFilters.pageNumber - 1) * queryFilters.pageSize)
     .limit(queryFilters.pageSize)
     .toArray();

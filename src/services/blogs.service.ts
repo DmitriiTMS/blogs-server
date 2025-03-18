@@ -11,7 +11,7 @@ import { postsRepository } from "../repository/postsRepository";
 export const blogsServices = {
   async getAll(queryFilters: BlogReqQueryFilters): Promise<BlogItems> {
 
-    const searchNameTerm =queryFilters.searchNameTerm !== "undefined"? queryFilters.searchNameTerm: "";
+    const searchNameTerm =queryFilters.searchNameTerm !== "undefined" ? queryFilters.searchNameTerm: "";
     const sortBy =queryFilters.sortBy !== "undefined" ? queryFilters.sortBy : "createdAt";
     const sortDirection = queryFilters.sortDirection !== "undefined" ? queryFilters.sortDirection : "desc";
     const pageNumber = queryFilters.pageNumber || 1;
@@ -26,7 +26,10 @@ export const blogsServices = {
 
     const blogs = await blogsRepository.getAll(resQueryDto);
 
-    const totalCount = await blogsCollection.countDocuments();
+    const filter = searchNameTerm
+      ? { name: { $regex: searchNameTerm, $options: "i" } } 
+      : {};
+    const totalCount = await blogsCollection.countDocuments(filter);
     const pagesCount = Math.ceil(totalCount / pageSize);
 
     const resBlogs = blogs.map((blog) => {

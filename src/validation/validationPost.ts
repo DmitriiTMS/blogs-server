@@ -58,10 +58,10 @@ export const blogIdValidation = body("blogId")
         if (!ObjectId.isValid(value)) {
             throw new Error("BlogId not ObjectId");
         }
-        // const blogExists = await blogsRepository.getBlog(new ObjectId(value));
-        // if (!blogExists) {
-        //     throw new Error("BlogId Not found");
-        // }
+        const blogExists = await blogsRepository.getBlog(new ObjectId(value));
+        if (!blogExists) {
+            throw new Error("BlogId Not found");
+        }
         return true;
     })
 
@@ -69,7 +69,7 @@ export const fieldValidationPost = [
     titleValidation,
     shortDescriptionValidation,
     contentValidation,
-    blogIdValidation,
+    // blogIdValidation,
 ];
 
 export const fieldValidationPostNotBlogId = [
