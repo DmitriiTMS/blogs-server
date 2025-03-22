@@ -1,6 +1,7 @@
 import { ObjectId } from "mongodb";
 import { blogsRepository } from "../repository/blogsRepository";
 import {
+  Blog,
   BlogItems,
   BlogReqQueryFilters,
   BlogReqQueryFiltersPage,
@@ -11,8 +12,8 @@ import { postsRepository } from "../repository/postsRepository";
 export const blogsServices = {
   async getAll(queryFilters: BlogReqQueryFilters): Promise<BlogItems> {
 
-    const searchNameTerm =queryFilters.searchNameTerm !== "undefined" ? queryFilters.searchNameTerm: "";
-    const sortBy =queryFilters.sortBy !== "undefined" ? queryFilters.sortBy : "createdAt";
+    const searchNameTerm = queryFilters.searchNameTerm !== "undefined" ? queryFilters.searchNameTerm : "";
+    const sortBy = queryFilters.sortBy !== "undefined" ? queryFilters.sortBy : "createdAt";
     const sortDirection = queryFilters.sortDirection !== "undefined" ? queryFilters.sortDirection : "desc";
     const pageNumber = queryFilters.pageNumber || 1;
     const pageSize = queryFilters.pageSize || 10;
@@ -27,17 +28,13 @@ export const blogsServices = {
     const blogs = await blogsRepository.getAll(resQueryDto);
 
     const filter = searchNameTerm
-      ? { name: { $regex: searchNameTerm, $options: "i" } } 
+      ? { name: { $regex: searchNameTerm, $options: "i" } }
       : {};
     const totalCount = await blogsCollection.countDocuments(filter);
     const pagesCount = Math.ceil(totalCount / pageSize);
 
     const resBlogs = blogs.map((blog) => {
-      const { _id, ...resBlog } = blog;
-      return {
-        id: String(blog._id),
-        ...resBlog,
-      };
+      return this.mapBlogToResBlog(blog);
     });
     const resBlogItems = {
       pagesCount: +pagesCount,
@@ -55,7 +52,7 @@ export const blogsServices = {
       return null;
     }
 
-   const sortBy = queryFilters.sortBy !== "undefined" ? queryFilters.sortBy : "createdAt";
+    const sortBy = queryFilters.sortBy !== "undefined" ? queryFilters.sortBy : "createdAt";
     const sortDirection = queryFilters.sortDirection !== "undefined" ? queryFilters.sortDirection : "desc";
     const pageNumber = queryFilters.pageNumber || 1;
     const pageSize = queryFilters.pageSize || 10;
@@ -64,11 +61,11 @@ export const blogsServices = {
     });
 
     const resQueryDto = {
-        sortBy,
-        sortDirection,
-        pageNumber,
-        pageSize,
-      };
+      sortBy,
+      sortDirection,
+      pageNumber,
+      pageSize,
+    };
 
     const posts = await postsRepository.getOneWithBlogId(resQueryDto, id)
     const pagesCount = Math.ceil(totalCount / pageSize);
@@ -105,4 +102,15 @@ export const blogsServices = {
     };
     return await blogsRepository.createPostWithBlogId(newPost);
   },
+
+  mapBlogToResBlog(blog: Blog) {
+    return {
+      id: String(blog._id),
+      name: blog.name,
+      description: blog.description,
+      websiteUrl: blog.websiteUrl,
+      createdAt: blog.createdAt,
+      isMembership: blog.isMembership
+    }
+  }
 };
