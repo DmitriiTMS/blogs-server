@@ -8,10 +8,12 @@ export const SETTINGS = {
   COLLECTIONS: {
     BLOGS: "/blogs",
     POSTS: "/posts",
+    USERS: "/users"
   },
   PATH: {
     BLOGS: "/blogs",
     POSTS: "/posts",
+    USERS: "/users",
     TEST: "/testing/all-data",
   },
   HTTP_STATUS: {

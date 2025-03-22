@@ -3,6 +3,7 @@ import { SETTINGS } from "../settings/settings";
 
 export let blogsCollection: any;
 export let postsCollection: any;
+export let usersCollection: any;
 
 export let mongoClient: MongoClient;
 
@@ -14,6 +15,7 @@ export const runDB = async (url: string): Promise<boolean> => {
   // получение доступа к коллекциям
   blogsCollection = db.collection(SETTINGS.COLLECTIONS.BLOGS)
   postsCollection = db.collection(SETTINGS.COLLECTIONS.POSTS)
+  usersCollection = db.collection(SETTINGS.COLLECTIONS.USERS)
 
   try {
     await mongoClient.connect();

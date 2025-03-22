@@ -26,6 +26,9 @@ export const blogsServices = {
     };
 
     const blogs = await blogsRepository.getAll(resQueryDto);
+    const resBlogs = blogs.map((blog) => {
+      return this.mapBlogToResBlog(blog);
+    });
 
     const filter = searchNameTerm
       ? { name: { $regex: searchNameTerm, $options: "i" } }
@@ -33,9 +36,7 @@ export const blogsServices = {
     const totalCount = await blogsCollection.countDocuments(filter);
     const pagesCount = Math.ceil(totalCount / pageSize);
 
-    const resBlogs = blogs.map((blog) => {
-      return this.mapBlogToResBlog(blog);
-    });
+  
     const resBlogItems = {
       pagesCount: +pagesCount,
       page: totalCount ? +pageNumber : 0,

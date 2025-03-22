@@ -3,7 +3,7 @@ import { blogsController } from "../controllers/blogs.controller";
 import { fieldValidationBlog, idValidationBlog, fieldValidationBlogQuery, fieldValidationBlogQueryNotSearchName, idValidationBlogID } from "../validation/validationBlog";
 import { validationBlogResultMiddleware } from "../middlewares/validationBlogResultMidleware";
 import { authSuperAdminMiddleware } from "../middlewares/authSuperAdminMiddleware";
-import { blogIdValidation, fieldValidationPostNotBlogId } from "../validation/validationPost";
+import { fieldValidationPostNotBlogId } from "../validation/validationPost";
 
 export const blogsRouter = Router();
 
