@@ -16,16 +16,29 @@ const sortDirectionValidationQuery = query("sortDirection")
   .isIn(['asc', 'desc', ''])
   .withMessage("The sortBy field must be a 'asc' or'desc")
 
-const pageNumberValidationQuery = query("pageNumber")
+  const pageNumberValidationQuery = query("pageNumber")
   .optional()
-  .isInt({ min: 0, max: 4294967295 })
-  .withMessage("Page pageNumber must be a number");
+  .custom((value) => {
+      if (value === undefined || value === "") return true;
+      const parsedValue = Number(value);
+      if (isNaN(parsedValue) || parsedValue < 1 || parsedValue > 4294967295) {
+          throw new Error("Page number must be a positive integer between 1 and 4294967295");
+      }
+      return true;
+  })
+  .toInt();
 
-const pageSizeValidationQuery = query("pageSize")
+  const pageSizeValidationQuery = query("pageSize")
   .optional()
-  .isInt({ min: 0, max: 4294967295 })
-  .withMessage("Page pageSize must be a number");
-
+  .custom((value) => {
+      if (value === undefined || value === "") return true;
+      const parsedValue = Number(value);
+      if (isNaN(parsedValue) || parsedValue < 1 || parsedValue > 4294967295) {
+          throw new Error("Page size must be a positive integer between 1 and 4294967295");
+      }
+      return true;
+  })
+  .toInt();
 
 export const idValidationBlog = param("id")
   .custom((value) => {

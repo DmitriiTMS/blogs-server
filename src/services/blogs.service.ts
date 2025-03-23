@@ -15,8 +15,8 @@ export const blogsServices = {
     const searchNameTerm = queryFilters.searchNameTerm !== "undefined" ? queryFilters.searchNameTerm : "";
     const sortBy = queryFilters.sortBy !== "undefined" ? queryFilters.sortBy : "createdAt";
     const sortDirection = queryFilters.sortDirection !== "undefined" ? queryFilters.sortDirection : "desc";
-    const pageNumber = queryFilters.pageNumber || 1;
-    const pageSize = queryFilters.pageSize || 10;
+    const pageNumber = !Number.isNaN(Number(queryFilters.pageNumber)) ? queryFilters.pageNumber : 1; 
+    const pageSize = !Number.isNaN(Number(queryFilters.pageSize)) ?  Number(queryFilters.pageSize) : 10;
     const resQueryDto = {
       searchNameTerm,
       sortBy,

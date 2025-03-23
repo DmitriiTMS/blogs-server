@@ -18,3 +18,20 @@ export type ResponseCreateViewUser = {
     email: string;
     createdAt: Date;
 };
+
+
+export type UserReqQueryFilters = {
+    searchLoginTerm: string,
+    searchEmailTerm: string,
+    sortBy: string,
+    sortDirection: string,
+    pageNumber: number,
+    pageSize: number
+}
+
+export type ResponseAllUsers = {
+    _id: string;
+    login: string;
+    email: string;
+    createdAt: Date;
+};

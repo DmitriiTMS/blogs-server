@@ -1,8 +1,8 @@
 import { NextFunction, Request, Response } from "express";
-import { ValidationError, validationResult } from "express-validator";
+import { param, ValidationError, validationResult } from "express-validator";
 import { SETTINGS } from "../settings/settings";
 
-export const validationResultMiddleware = (
+export const validationResultParamMiddleware = (
   req: Request,
   res: Response,
   next: NextFunction
@@ -11,7 +11,7 @@ export const validationResultMiddleware = (
         const validationError = error as ValidationError & { path: string };
         return {
           message: validationError.msg, 
-          field: validationError.path, 
+          param: validationError.path, 
         };
       });
 
