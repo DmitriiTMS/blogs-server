@@ -10,12 +10,12 @@ export const usersRouter = Router();
 
 usersRouter.get('/',
     authSuperAdminMiddleware,
-    fieldValidationUserQuery, validationResultBodyMiddleware,
+    fieldValidationUserQuery, validationResultQueryMiddleware,
     usersController.getAllUsers)
 
 usersRouter.post('/',
     authSuperAdminMiddleware,
-    fieldValidationUserBody, validationResultQueryMiddleware,
+    fieldValidationUserBody, validationResultBodyMiddleware,
     usersController.createUser)
 
 usersRouter.delete('/:id',

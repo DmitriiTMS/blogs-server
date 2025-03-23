@@ -1,3 +1,4 @@
+import { usersQueryRepository } from "../repository/users/usersQueryRepository";
 import { usersRepository } from "../repository/users/usersRepository";
 import { RequestCreateUser } from "../types/users-types";
 import { bcryptService } from "../utils/bcrypt";
@@ -7,8 +8,8 @@ export const usersService = {
     async createUser(userDTO: RequestCreateUser): Promise<
         { userId: string } | { errorsMessages: Array<{ message: string, field: string }> }
     > {
-        const loginUser = await usersRepository.findByLogin(userDTO.login);
-        const emailUser = await usersRepository.findByEmail(userDTO.email);
+        const loginUser = await usersQueryRepository.findByLogin(userDTO.login);
+        const emailUser = await usersQueryRepository.findByEmail(userDTO.email);
         if (loginUser || emailUser) {
             return {
                 errorsMessages: [

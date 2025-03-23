@@ -14,6 +14,7 @@ export const SETTINGS = {
     BLOGS: "/blogs",
     POSTS: "/posts",
     USERS: "/users",
+    AUTH: "/auth",
     TEST: "/testing/all-data",
   },
   HTTP_STATUS: {

@@ -7,15 +7,18 @@ export const usersRepository = {
         const newUser = await usersCollection.insertOne(user);
         return newUser.insertedId.toString();
     },
-    async findByLogin(login: string): Promise<string> {
-        return await usersCollection.findOne({ login });
-    },
-
-    async findByEmail(email: string): Promise<string> {
-        return await usersCollection.findOne({ email });
-    },
 
     async deleteUser(id: string) {
         return await usersCollection.deleteOne({ _id: new ObjectId(id) });
     },
-}
+
+    async getUserById(id: string) {
+        return await usersCollection.findOne({ _id: new ObjectId(id) });
+    },
+
+    async findByLoginOrEmail(loginOrEmail: string) {
+        return await usersCollection.findOne({
+            $or: [{ email: loginOrEmail }, { login: loginOrEmail }],
+        });
+    },
+} 
