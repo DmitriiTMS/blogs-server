@@ -1,11 +1,12 @@
 import { Request, Response } from "express";
-import { postsRepository } from "../repository/postsRepository";
+
 import { SETTINGS } from "../settings/settings";
 import { blogsRepository } from "../repository/blogsRepository";
 import { Blog } from "../types/blog-types";
 import { ObjectId } from "mongodb";
 import { postsService } from "../services/posts.service";
 import { PostReqQueryFilters } from "../types/post-types";
+import { postsRepository } from "../repository/posts/postsRepository";
 
 export const postsController = {
   async getAllPosts(req: Request, res: Response) {

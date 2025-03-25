@@ -7,7 +7,8 @@ import {
   BlogReqQueryFiltersPage,
 } from "../types/blog-types";
 import { blogsCollection, postsCollection } from "../db/mongoDB";
-import { postsRepository } from "../repository/postsRepository";
+import { postsRepository } from "../repository/posts/postsRepository";
+
 
 export const blogsServices = {
   async getAll(queryFilters: BlogReqQueryFilters): Promise<BlogItems> {

@@ -1,5 +1,6 @@
 import { postsCollection } from "../db/mongoDB";
-import { postsRepository } from "../repository/postsRepository";
+import { postsRepository } from "../repository/posts/postsRepository";
+
 import { PostReqQueryFilters } from "../types/post-types";
 
 export const postsService = {

@@ -8,11 +8,13 @@ export const SETTINGS = {
   COLLECTIONS: {
     BLOGS: "/blogs",
     POSTS: "/posts",
-    USERS: "/users"
+    USERS: "/users",
+    COMMENTS: "/comments"
   },
   PATH: {
     BLOGS: "/blogs",
     POSTS: "/posts",
+    COMMENTS: "/comments",
     USERS: "/users",
     AUTH: "/auth",
     TEST: "/testing/all-data",
@@ -25,4 +27,8 @@ export const SETTINGS = {
     UNAUTHORIZATION: 401,
     NOT_FOUND: 404,
   },
+  JWT: {
+    SECRET_KEY: process.env.JWT_SECRET as string,
+    TIME: 3600
+  }
 };

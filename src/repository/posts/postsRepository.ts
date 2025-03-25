@@ -1,12 +1,13 @@
 import { ObjectId } from "mongodb";
-import { postsCollection } from "../db/mongoDB";
-import { BlogByIdDto } from "../types/blog-types";
+import { postsCollection } from "../../db/mongoDB";
+import { BlogByIdDto } from "../../types/blog-types";
 import {
   Post,
   PostClient,
   PostDto,
   PostReqQueryFilters,
-} from "../types/post-types";
+} from "../../types/post-types";
+
 
 export const postsRepository = {
   async getAll(queryFilters: PostReqQueryFilters): Promise<Post[]> {
