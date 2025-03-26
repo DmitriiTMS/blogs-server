@@ -22,6 +22,7 @@ export const blogsController = {
 
     const blogsItems = await blogsServices.getAll(filters);
     res.status(SETTINGS.HTTP_STATUS.OK).json(blogsItems);
+    return
   },
 
   async createBlog(req: Request, res: Response) {
@@ -52,6 +53,7 @@ export const blogsController = {
     }
     const { _id, ...resBlog } = blog;
     res.status(SETTINGS.HTTP_STATUS.OK).json({ id: blog._id, ...resBlog });
+    return
   },
 
   async getBlogByIdPost(req: Request, res: Response) {
@@ -70,6 +72,7 @@ export const blogsController = {
       return;
     }
     res.status(SETTINGS.HTTP_STATUS.OK).json({ ...blog });
+    return
   },
 
   async updateBlog(req: Request, res: Response) {
