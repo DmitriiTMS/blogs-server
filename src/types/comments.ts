@@ -1,3 +1,5 @@
+import { ObjectId } from "mongodb";
+
 export type CommentRequest = {
   userId: string | null;
   userLogin: string | null;
@@ -15,7 +17,7 @@ export type CommentRequestRepository = {
 };
 
 export type CommentResponseRepository = {
-  _id: string;
+  _id: ObjectId;
   content: string;
   commentatorInfo: {
     userId: string;
