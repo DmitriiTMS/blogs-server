@@ -25,12 +25,23 @@ export const authController = {
       res.sendStatus(SETTINGS.HTTP_STATUS.NOT_FOUND);
       return;
     }
-    res
-      .status(SETTINGS.HTTP_STATUS.OK)
-      .json({
-        email: user.email,
-        login: user.login,
-        userId: user._id.toString(),
-      });
+    res.status(SETTINGS.HTTP_STATUS.OK).json({
+      email: user.email,
+      login: user.login,
+      userId: user._id.toString(),
+    });
+  },
+
+  async register(req: Request, res: Response) {
+    
+    const { login, email, password } = req.body;
+
+    const result = await authService.registerUser({ login, password, email });
+    if (result.status === ResultStatus.Success) {
+      res.sendStatus(SETTINGS.HTTP_STATUS.NO_CONTENT);
+      return
+    }
+    res.sendStatus(SETTINGS.HTTP_STATUS.BAD_REQUEST);
+    return
   },
 };

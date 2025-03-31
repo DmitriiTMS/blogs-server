@@ -31,5 +31,9 @@ export const SETTINGS = {
   JWT: {
     SECRET_KEY: process.env.JWT_SECRET as string,
     TIME: 3600
+  },
+  MAIL: {
+    EMAIL: "chunosov.dmitrij@bk.ru",
+    EMAIL_PASSWORD: "AU4vPai3YmTSkcK6gshm"
   }
 };
