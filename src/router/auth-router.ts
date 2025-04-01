@@ -21,3 +21,14 @@ authRouter.post(
   validationResultBodyMiddleware,
   authController.register
 );
+
+authRouter.post(
+  "/registration-confirmation",
+  authController.registrationConfirmation
+);
+
+authRouter.post(
+  "/registration-email-resending",
+  authController.registrationEmailResending
+);
+

@@ -33,15 +33,46 @@ export const authController = {
   },
 
   async register(req: Request, res: Response) {
-    
     const { login, email, password } = req.body;
 
     const result = await authService.registerUser({ login, password, email });
     if (result.status === ResultStatus.Success) {
       res.sendStatus(SETTINGS.HTTP_STATUS.NO_CONTENT);
-      return
+      return;
     }
-    res.sendStatus(SETTINGS.HTTP_STATUS.BAD_REQUEST);
-    return
+    res
+      .status(SETTINGS.HTTP_STATUS.BAD_REQUEST)
+      .json({ errorsMessages: result.extensions });
+    return;
+  },
+
+  async registrationConfirmation(req: Request, res: Response) {
+    const { code } = req.body;
+
+    const result = await authService.registrationConfirmationUser(code);
+
+    if (result.status !== ResultStatus.Success) {
+      res
+        .status(SETTINGS.HTTP_STATUS.BAD_REQUEST)
+        .json({ errorsMessages: result.extensions });
+      return;
+    }
+
+    res.sendStatus(SETTINGS.HTTP_STATUS.NO_CONTENT);
+  },
+
+  async registrationEmailResending(req: Request, res: Response) {
+    const { email } = req.body;
+
+    const result = await authService.registrationEmailResendingUser(email);
+
+    if (result.status !== ResultStatus.Success) {
+      res
+        .status(SETTINGS.HTTP_STATUS.BAD_REQUEST)
+        .json({ errorsMessages: result.extensions });
+      return;
+    }
+
+    res.sendStatus(SETTINGS.HTTP_STATUS.NO_CONTENT);
   },
 };

@@ -2,7 +2,7 @@ import nodemailer from "nodemailer";
 import { SETTINGS } from "../settings/settings";
 
 export const nodemailerService = {
-  async sendEmail(email: string, code: string): Promise<boolean> {
+  async sendEmail(email: string, code: string, template: (code: string) => string): Promise<boolean> {
     let transporter = nodemailer.createTransport({
       host: "smtp.mail.ru",
       port: 465,
@@ -17,12 +17,32 @@ export const nodemailerService = {
       from: `Dmitrii <${SETTINGS.MAIL.EMAIL}>`,
       to: email,
       subject: "Your code is here",
-      html: ` <h1>Thank for your registration</h1>
-               <p>To finish registration please follow the link below:<br>
-                  <a href='https://somesite.com/confirm-email?code=${code}'>complete registration</a>
-              </p>`,
+      html: template(code),
     });
 
     return !!info;
   },
+  // async sendEmailResending(email: string, code: string): Promise<boolean> {
+  //   let transporter = nodemailer.createTransport({
+  //     host: "smtp.mail.ru",
+  //     port: 465,
+  //     secure: true,
+  //     auth: {
+  //       user: SETTINGS.MAIL.EMAIL,
+  //       pass: SETTINGS.MAIL.EMAIL_PASSWORD,
+  //     },
+  //   });
+
+  //   let info = await transporter.sendMail({
+  //     from: `Dmitrii <${SETTINGS.MAIL.EMAIL}>`,
+  //     to: email,
+  //     subject: "Your code is here",
+  //     html: `<h1>Password recovery</h1>
+  //       <p>To finish password recovery please follow the link below:
+  //           <a href='https://some-front.com/confirm-registration?code=${code}'>recovery password</a>
+  //       </p>`,
+  //   });
+
+  //   return !!info;
+  // },
 };

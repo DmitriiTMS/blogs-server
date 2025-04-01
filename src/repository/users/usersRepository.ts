@@ -1,6 +1,7 @@
 import { ObjectId } from "mongodb";
 import { usersCollection } from "../../db/mongoDB";
 import { RequestCreateUser } from "../../types/users-types";
+import { ResponseCodeUser } from "../../types/auth-types";
 
 export const usersRepository = {
   async createUser(user: RequestCreateUser): Promise<string> {
@@ -30,5 +31,30 @@ export const usersRepository = {
       $or: [{ email }, { login }],
     });
     return !!user;
+  },
+
+  async findBYCodeEmail(code: string): Promise<ResponseCodeUser> {
+    const resultUser = await usersCollection.findOne({
+      "emailConfirmation.confirmationCode": code,
+    });
+    return resultUser;
+  },
+
+  async updateUserIsConfirmed(id: string) {
+    return await usersCollection.updateOne(
+      { _id: new ObjectId(id) },
+      {
+        $set: {
+          "emailConfirmation.isConfirmed": true,
+        },
+      }
+    );
+  },
+
+  async findByEmail(email: string): Promise<ResponseCodeUser> {
+    return await usersCollection.findOne({ email });
+  },
+  async findByLogin(login: string): Promise<ResponseCodeUser> {
+    return await usersCollection.findOne({ login });
   },
 };
