@@ -9,18 +9,12 @@ import { add } from "date-fns/add";
 
 export const emailExamples = {
   registrationEmail(code: string) {
-      return ` <h1>Thank for your registration</h1>
+    return `<h1>Thank for your registration</h1>
              <p>To finish registration please follow the link below:<br>
-                <a href='https://somesite.com/confirm-email?code=${code}'>complete registration</a>
-            </p>`
+                <a href='https://some-front.com/confirm-registration?code=${code}'>complete registration</a>
+            </p>`;
   },
-  passwordRecoveryEmail(code: string) {
-      return `<h1>Password recovery</h1>
-      <p>To finish password recovery please follow the link below:
-          <a href='https://somesite.com/password-recovery?recoveryCode=${code}'>recovery password</a>
-      </p>`
-  }
-}
+};
 
 export const authService = {
   async loginUser(loginDTO: RequestLoginUser) {
@@ -67,7 +61,7 @@ export const authService = {
         status: ResultStatus.BadRequest,
         errorMessage: "Bad Request",
         data: null,
-        extensions: [{ message: "Not Found user by email", field: "email" }],
+        extensions: [{ message: "user by email", field: "email" }],
       };
 
     const userLogin = await usersRepository.findByLogin(login);
@@ -76,7 +70,7 @@ export const authService = {
         status: ResultStatus.BadRequest,
         errorMessage: "Bad Request",
         data: null,
-        extensions: [{ message: "Not Found user by login", field: "login" }],
+        extensions: [{ message: "user by login", field: "login" }],
       };
 
     const passwordHash = await bcryptService.generateHash(
@@ -102,7 +96,11 @@ export const authService = {
     await usersRepository.createUser(newUser);
 
     nodemailerService
-      .sendEmail(newUser.email, newUser.emailConfirmation.confirmationCode, emailExamples.registrationEmail)
+      .sendEmail(
+        newUser.email,
+        newUser.emailConfirmation.confirmationCode,
+        emailExamples.registrationEmail
+      )
       .catch((er) => console.error("error in send email:", er));
 
     return {
@@ -195,10 +193,13 @@ export const authService = {
       };
     }
 
-    // const codeUser = user.emailConfirmation.confirmationCode ? user.emailConfirmation.confirmationCode : randomUUID()
+    const newConfirmationCode = randomUUID()
+  
+    await usersRepository.updateUserСonfirmationCode(user._id.toString(), newConfirmationCode);
+
 
     nodemailerService
-      .sendEmail(user.email, randomUUID(), emailExamples.passwordRecoveryEmail)
+      .sendEmail(user.email, newConfirmationCode, emailExamples.registrationEmail)
       .catch((er) => console.error("error in send email:", er));
 
     return {

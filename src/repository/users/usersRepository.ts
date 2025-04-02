@@ -51,6 +51,17 @@ export const usersRepository = {
     );
   },
 
+  async updateUserСonfirmationCode(id: string, code: string) {
+    return await usersCollection.updateOne(
+      { _id: new ObjectId(id) },
+      {
+        $set: {
+          "emailConfirmation.confirmationCode": code,
+        },
+      }
+    );
+  },
+
   async findByEmail(email: string): Promise<ResponseCodeUser> {
     return await usersCollection.findOne({ email });
   },

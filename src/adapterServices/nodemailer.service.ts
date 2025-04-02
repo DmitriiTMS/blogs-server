@@ -11,6 +11,12 @@ export const nodemailerService = {
         user: SETTINGS.MAIL.EMAIL,
         pass: SETTINGS.MAIL.EMAIL_PASSWORD,
       },
+      tls: {
+        // Важные настройки для Mail.ru
+        rejectUnauthorized: false, // Только для тестов! В продакшене должно быть true
+        minVersion: "TLSv1.2",
+        ciphers: 'SSLv3'
+      },
     });
 
     let info = await transporter.sendMail({
