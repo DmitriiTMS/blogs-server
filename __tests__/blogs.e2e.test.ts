@@ -2,7 +2,6 @@ import request from 'supertest';
 import { app } from '../src/app';
 import { SETTINGS } from '../src/settings/settings';
 import { MongoMemoryServer } from 'mongodb-memory-server';
-import { MongoClient } from 'mongodb';
 import { closeDB, runDB } from '../src/db/mongoDB';
 
 describe('/blogs', () => {

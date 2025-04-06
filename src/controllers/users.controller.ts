@@ -41,6 +41,7 @@ export const usersController = {
         const newUser = await usersQueryRepository.getUserById(result.userId);
         if (!newUser) {
             res.status(SETTINGS.HTTP_STATUS.NOT_FOUND).json({ message: 'User not found' });
+            return
         }
         const userView = mapUserDBToUserView(newUser)
         res.status(SETTINGS.HTTP_STATUS.GREATED).json(userView);
