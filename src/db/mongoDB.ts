@@ -5,6 +5,7 @@ export let blogsCollection: any;
 export let postsCollection: any;
 export let commentsCollection: any;
 export let usersCollection: any;
+export let refreshTokensCollection: any;
 
 export let mongoClient: MongoClient;
 
@@ -18,6 +19,7 @@ export const runDB = async (url: string): Promise<boolean> => {
   postsCollection = db.collection(SETTINGS.COLLECTIONS.POSTS)
   commentsCollection = db.collection(SETTINGS.COLLECTIONS.COMMENTS)
   usersCollection = db.collection(SETTINGS.COLLECTIONS.USERS)
+  refreshTokensCollection = db.collection(SETTINGS.COLLECTIONS.REFRESH_TOKEN)
 
   try {
     await mongoClient.connect();

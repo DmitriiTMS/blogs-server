@@ -13,7 +13,11 @@ authRouter.post(
   validationResultBodyMiddleware,
   authController.login
 );
+
 authRouter.get("/me", accessTokenGuard, authController.getMe);
+
+authRouter.post("/refresh-token", authController.refreshToken);
+authRouter.post("/logout", authController.logout);
 
 authRouter.post(
   "/registration",
@@ -31,4 +35,3 @@ authRouter.post(
   "/registration-email-resending",
   authController.registrationEmailResending
 );
-

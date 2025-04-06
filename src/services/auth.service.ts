@@ -1,7 +1,9 @@
 import { jwtService } from "../adapterServices/jwt.service";
 import { nodemailerService } from "../adapterServices/nodemailer.service";
 import { ResultStatus } from "../common/resultError/resultError";
+import { refreshTokensRepository } from "../repository/refreshTokens/refreshTokens.repository";
 import { usersRepository } from "../repository/users/usersRepository";
+import { SETTINGS } from "../settings/settings";
 import { RequestLoginUser, RequestRegisterUser } from "../types/auth-types";
 import { bcryptService } from "../utils/bcrypt";
 import { randomUUID } from "crypto";
@@ -43,12 +45,100 @@ export const authService = {
     }
 
     const accessToken = await jwtService.createToken(
+      SETTINGS.JWT.TIME,
       user._id.toString(),
       user.login
     );
+
+    const refreshToken = await jwtService.createToken(
+      SETTINGS.JWT.TIME_REFRESH,
+      user._id.toString(),
+      user.login
+    );
+
+    await refreshTokensRepository.addRefreshToken({ refreshToken });
+
     return {
       status: ResultStatus.Success,
-      data: { accessToken },
+      data: { accessToken, refreshToken },
+      extensions: [],
+    };
+  },
+
+  async verifyRefreshToken(refreshToken: string) {
+    const decodeRefreshToken = await jwtService.verifyToken(
+      refreshToken,
+      SETTINGS.JWT.SECRET_KEY
+    );
+
+    if (!decodeRefreshToken) {
+      return {
+        status: ResultStatus.Unauthorized,
+        data: null,
+        extensions: [{ code: "INVALID_REFRESH_TOKEN" }],
+      };
+    }
+
+    const newAccessToken = await jwtService.createToken(
+      SETTINGS.JWT.TIME,
+      decodeRefreshToken.userId,
+      decodeRefreshToken.userLogin
+    );
+    const newRefreshToken = await jwtService.createToken(
+      SETTINGS.JWT.TIME_REFRESH,
+      decodeRefreshToken.userId,
+      decodeRefreshToken.userLogin
+    );
+
+    const token = await refreshTokensRepository.findByRefreshToken(
+      refreshToken
+    );
+
+    if (!token) {
+      return {
+        status: ResultStatus.Unauthorized,
+        data: null,
+        extensions: null,
+      };
+    }
+
+    await refreshTokensRepository.deleteRefreshToken(token._id);
+    await refreshTokensRepository.addRefreshToken({
+      refreshToken: newRefreshToken,
+    });
+
+    return {
+      status: ResultStatus.Success,
+      data: { newAccessToken, newRefreshToken },
+      extensions: [],
+    };
+  },
+
+  async logout(refreshToken: string) {
+    const decodeRefreshToken = await jwtService.verifyToken(
+      refreshToken,
+      SETTINGS.JWT.SECRET_KEY
+    );
+    if (!decodeRefreshToken) {
+      return {
+        status: ResultStatus.Unauthorized,
+        data: null,
+        extensions: [{ code: "INVALID_REFRESH_TOKEN" }],
+      };
+    }
+    const token = await refreshTokensRepository.findByRefreshToken(
+      refreshToken
+    );
+    if (!token) {
+      return {
+        status: ResultStatus.NotFound,
+        data: [],
+        extensions: [],
+      };
+    }
+    return {
+      status: ResultStatus.Success,
+      data: token,
       extensions: [],
     };
   },
@@ -193,13 +283,19 @@ export const authService = {
       };
     }
 
-    const newConfirmationCode = randomUUID()
-  
-    await usersRepository.updateUserСonfirmationCode(user._id.toString(), newConfirmationCode);
+    const newConfirmationCode = randomUUID();
 
+    await usersRepository.updateUserСonfirmationCode(
+      user._id.toString(),
+      newConfirmationCode
+    );
 
     nodemailerService
-      .sendEmail(user.email, newConfirmationCode, emailExamples.registrationEmail)
+      .sendEmail(
+        user.email,
+        newConfirmationCode,
+        emailExamples.registrationEmail
+      )
       .catch((er) => console.error("error in send email:", er));
 
     return {
@@ -209,3 +305,7 @@ export const authService = {
     };
   },
 };
+
+// const token = await refreshTokensRepository.findByRefreshToken(refreshToken);
+// await refreshTokensRepository.deleteRefreshToken(token._id);
+// await refreshTokensRepository.addRefreshToken({ refreshToken: newRefreshToken });

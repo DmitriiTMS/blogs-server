@@ -1,5 +1,6 @@
 import { Request, Response, NextFunction } from "express";
 import { jwtService } from "../adapterServices/jwt.service";
+import { SETTINGS } from "../settings/settings";
 
 export const accessTokenGuard = async (
   req: Request,
@@ -18,7 +19,7 @@ export const accessTokenGuard = async (
     return;
   }
 
-  const payload = await jwtService.verifyToken(token);
+  const payload = await jwtService.verifyToken(token, SETTINGS.JWT.SECRET_KEY);
   if (payload) {
     const { userId, userLogin } = payload;
 

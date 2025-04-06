@@ -3,6 +3,8 @@ import { authService } from "../services/auth.service";
 import { SETTINGS } from "../settings/settings";
 import { ResultStatus } from "../common/resultError/resultError";
 import { usersQueryRepository } from "../repository/users/usersQueryRepository";
+import { refreshTokensRepository } from "../repository/refreshTokens/refreshTokens.repository";
+import { jwtService } from "../adapterServices/jwt.service";
 
 export const authController = {
   async login(req: Request, res: Response) {
@@ -14,6 +16,10 @@ export const authController = {
         .json(...result.extensions);
       return;
     }
+    res.cookie("refreshToken", result.data!.refreshToken, {
+      httpOnly: true,
+      secure: true,
+    });
     res
       .status(SETTINGS.HTTP_STATUS.OK)
       .json({ accessToken: result.data!.accessToken });
@@ -30,6 +36,43 @@ export const authController = {
       login: user.login,
       userId: user._id.toString(),
     });
+  },
+
+  async refreshToken(req: Request, res: Response) {
+    const { refreshToken } = req.cookies;
+    if (!refreshToken) {
+      res.sendStatus(SETTINGS.HTTP_STATUS.UNAUTHORIZATION);
+      return
+    }
+    const result = await authService.verifyRefreshToken(refreshToken);
+    if (result.status !== ResultStatus.Success) {
+      res.sendStatus(SETTINGS.HTTP_STATUS.UNAUTHORIZATION);
+      return;
+    } 
+    res.cookie("refreshToken", result.data!.newRefreshToken, {
+      httpOnly: true,
+      secure: true,
+    });
+    res.status(SETTINGS.HTTP_STATUS.OK).json({
+      accessToken: result.data!.newAccessToken,
+    });
+    return;
+  },
+
+  async logout(req: Request, res: Response) {
+    const { refreshToken } = req.cookies;
+    if (!refreshToken) {
+      res.sendStatus(SETTINGS.HTTP_STATUS.UNAUTHORIZATION);
+      return
+    }
+    const result = await authService.logout(refreshToken);
+    if (result.status !== ResultStatus.Success) {
+      res.sendStatus(SETTINGS.HTTP_STATUS.UNAUTHORIZATION);
+      return;
+    }
+    await refreshTokensRepository.deleteRefreshToken(result.data._id);
+    res.sendStatus(SETTINGS.HTTP_STATUS.NO_CONTENT);
+    return;
   },
 
   async register(req: Request, res: Response) {
