@@ -96,7 +96,7 @@ export const authService = {
 
     if (!token) {
       return {
-        status: ResultStatus.Unauthorized,
+        status: ResultStatus.BadRequest,
         data: null,
         extensions: null,
       };
@@ -305,7 +305,3 @@ export const authService = {
     };
   },
 };
-
-// const token = await refreshTokensRepository.findByRefreshToken(refreshToken);
-// await refreshTokensRepository.deleteRefreshToken(token._id);
-// await refreshTokensRepository.addRefreshToken({ refreshToken: newRefreshToken });
