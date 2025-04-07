@@ -35,6 +35,7 @@ export const authService = {
       loginDTO.password,
       user.password
     );
+    
     if (!checkPasswordUser) {
       return {
         status: ResultStatus.BadRequest,

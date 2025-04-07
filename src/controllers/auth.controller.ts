@@ -4,7 +4,6 @@ import { SETTINGS } from "../settings/settings";
 import { ResultStatus } from "../common/resultError/resultError";
 import { usersQueryRepository } from "../repository/users/usersQueryRepository";
 import { refreshTokensRepository } from "../repository/refreshTokens/refreshTokens.repository";
-import { jwtService } from "../adapterServices/jwt.service";
 
 export const authController = {
   async login(req: Request, res: Response) {
