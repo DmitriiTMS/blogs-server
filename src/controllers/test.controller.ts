@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import { SETTINGS } from "../settings/settings";
-import { blogsCollection, commentsCollection, postsCollection, refreshTokensCollection, usersCollection } from "../db/mongoDB";
+import { accessToApiCollection, blogsCollection, commentsCollection, postsCollection, refreshTokensCollection, usersCollection } from "../db/mongoDB";
 
 
 export const clearDB = async (req: Request, res: Response) => {
@@ -9,5 +9,6 @@ export const clearDB = async (req: Request, res: Response) => {
     await commentsCollection.deleteMany({});
     await usersCollection.deleteMany({});
     await refreshTokensCollection.deleteMany({});
+    await accessToApiCollection.deleteMany({});
     res.status(SETTINGS.HTTP_STATUS.NO_CONTENT).json()
 };

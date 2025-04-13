@@ -7,12 +7,14 @@ import { usersRouter } from './router/users-router'
 import { authRouter } from './router/auth-router'
 import { commentsRouter } from './router/comments-router'
 import cookieParser from 'cookie-parser'
+import { apiLoggerMiddleware } from './middlewares/apiLoggerMiddleware'
 
 
 
 export const app = express()
 app.use(cookieParser())
 app.use(express.json())
+app.use(apiLoggerMiddleware)
 
 
 app.use(SETTINGS.PATH.BLOGS, blogsRouter)

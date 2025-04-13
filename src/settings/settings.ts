@@ -10,7 +10,8 @@ export const SETTINGS = {
     POSTS: "/posts",
     USERS: "/users",
     COMMENTS: "/comments",
-    REFRESH_TOKEN:"/refresh_tokens"
+    REFRESH_TOKEN:"/refresh_tokens",
+    ACCESS_TO_API:"/access_to_api"
   },
   PATH: {
     BLOGS: "/blogs",
