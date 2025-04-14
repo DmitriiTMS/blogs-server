@@ -15,6 +15,10 @@ export const authController = {
         .json(...result.extensions);
       return;
     }
+
+    const title = req.headers['user-agent'];
+    await authService.createDeviceUsers(result.data!.refreshToken, req.ip!, title!);
+
     res.cookie("refreshToken", result.data!.refreshToken, {
       httpOnly: true,
       secure: true,
@@ -22,6 +26,7 @@ export const authController = {
     res
       .status(SETTINGS.HTTP_STATUS.OK)
       .json({ accessToken: result.data!.accessToken });
+
   },
 
   async getMe(req: Request, res: Response) {
@@ -55,6 +60,9 @@ export const authController = {
     res.status(SETTINGS.HTTP_STATUS.OK).json({
       accessToken: result.data!.newAccessToken,
     });
+
+    const title = req.headers['user-agent'];
+    await authService.createDeviceUsers(result.data!.newRefreshToken, req.ip!, title!);
     return;
   },
 

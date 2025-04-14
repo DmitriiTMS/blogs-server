@@ -35,7 +35,7 @@ export const authService = {
       loginDTO.password,
       user.password
     );
-    
+
     if (!checkPasswordUser) {
       return {
         status: ResultStatus.BadRequest,
@@ -51,10 +51,12 @@ export const authService = {
       user.login
     );
 
+    const deviceId = randomUUID();
     const refreshToken = await jwtService.createToken(
       SETTINGS.JWT.TIME_REFRESH,
       user._id.toString(),
-      user.login
+      user.login,
+      deviceId
     );
 
     await refreshTokensRepository.addRefreshToken({ refreshToken });
@@ -64,6 +66,53 @@ export const authService = {
       data: { accessToken, refreshToken },
       extensions: [],
     };
+  },
+
+  async createDeviceUsers(refreshToken: string, ip: string, title: string) {
+    const decodeRefreshToken = await jwtService.verifyToken(
+      refreshToken,
+      SETTINGS.JWT.SECRET_KEY
+    );
+    if (!decodeRefreshToken || !ip || !title) {
+      return {
+        status: ResultStatus.BadRequest,
+        data: null,
+        extensions: [{ field: "!decodeRefreshToken || !ip || !title" }],
+      };
+    }
+
+    //  Проверяем срок действия токена
+    const now = Math.floor(Date.now() / 1000);
+    if (decodeRefreshToken.exp && decodeRefreshToken.exp < now) {
+      return {
+        status: ResultStatus.Unauthorized,
+        data: null,
+        extensions: [{ field: "refreshToken", message: "Token expired" }],
+      };
+    }
+
+    // Проверяем существование сессии в базе
+    const existingSession = await refreshTokensRepository.findByDeviceAndTimeRefreshToken(decodeRefreshToken.deviceId!);
+
+      // Обновить дату последней активности
+    if (existingSession) {
+      await refreshTokensRepository.updateSessionLastActiveDate(
+        decodeRefreshToken.deviceId!,
+        new Date(decodeRefreshToken.iat! * 1000).toISOString()
+      );
+      return
+    }
+
+    const session = {
+      ip: ip === "::1" ? "127.0.0.1" : ip,
+      title,
+      lastActiveDate: new Date(decodeRefreshToken.iat! * 1000).toISOString(),
+      deviceId: decodeRefreshToken?.deviceId,
+      userId: decodeRefreshToken.userId,
+    };
+
+    await refreshTokensRepository.createSession(session);
+    return true;
   },
 
   async verifyRefreshToken(refreshToken: string) {
@@ -88,7 +137,8 @@ export const authService = {
     const newRefreshToken = await jwtService.createToken(
       SETTINGS.JWT.TIME_REFRESH,
       decodeRefreshToken.userId,
-      decodeRefreshToken.userLogin
+      decodeRefreshToken.userLogin,
+      decodeRefreshToken.deviceId,
     );
 
     const token = await refreshTokensRepository.findByRefreshToken(

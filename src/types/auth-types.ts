@@ -23,3 +23,10 @@ export type ResponseCodeUser = {
     isConfirmed: boolean;
   };
 };
+
+export type SeesionDevice = {
+  ip: string,
+  title: string,
+  lastActiveDate: string | undefined, 
+  deviceId: string | undefined
+}

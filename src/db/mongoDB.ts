@@ -7,6 +7,7 @@ export let commentsCollection: any;
 export let usersCollection: any;
 export let refreshTokensCollection: any;
 export let accessToApiCollection: any;
+export let deviceInfoCollection: any;
 
 export let mongoClient: MongoClient;
 
@@ -22,6 +23,7 @@ export const runDB = async (url: string): Promise<boolean> => {
   usersCollection = db.collection(SETTINGS.COLLECTIONS.USERS)
   refreshTokensCollection = db.collection(SETTINGS.COLLECTIONS.REFRESH_TOKEN)
   accessToApiCollection = db.collection(SETTINGS.COLLECTIONS.ACCESS_TO_API)
+  deviceInfoCollection = db.collection(SETTINGS.COLLECTIONS.DEVICE_INFO)
 
   try {
     await mongoClient.connect();

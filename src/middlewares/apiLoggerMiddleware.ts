@@ -8,10 +8,11 @@ export const apiLoggerMiddleware = async (
 ) => {
 
   const userIp = req.headers["x-forwarded-for"] || req.socket.remoteAddress;
+  const originalUrl = req.originalUrl;
 
   const logEntry = {
     ip: userIp,
-    url: req.originalUrl,
+    url: originalUrl,
     date: new Date(),
   };
 
@@ -24,6 +25,6 @@ export const apiLoggerMiddleware = async (
     date: { $gte: tenSecondsAgo },
   });
 
-  console.log(count);
+  console.log("Count apiLoggerMiddleware = ", count);
   next();
 };
