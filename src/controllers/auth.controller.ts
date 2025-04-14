@@ -8,16 +8,15 @@ import { refreshTokensRepository } from "../repository/refreshTokens/refreshToke
 export const authController = {
   async login(req: Request, res: Response) {
     const { loginOrEmail, password } = req.body;
-    const result = await authService.loginUser({ loginOrEmail, password });
+    const {ip} = req;
+    const title = req.headers['user-agent'];
+    const result = await authService.loginUser({ loginOrEmail, password, title, ip });
     if (result.status !== ResultStatus.Success) {
       res
         .status(SETTINGS.HTTP_STATUS.UNAUTHORIZATION)
         .json(...result.extensions);
       return;
     }
-
-    const title = req.headers['user-agent'];
-    await authService.createDeviceUsers(result.data!.refreshToken, req.ip!, title!);
 
     res.cookie("refreshToken", result.data!.refreshToken, {
       httpOnly: true,
@@ -60,10 +59,6 @@ export const authController = {
     res.status(SETTINGS.HTTP_STATUS.OK).json({
       accessToken: result.data!.newAccessToken,
     });
-
-    const title = req.headers['user-agent'];
-    await authService.createDeviceUsers(result.data!.newRefreshToken, req.ip!, title!);
-    return;
   },
 
   async logout(req: Request, res: Response) {

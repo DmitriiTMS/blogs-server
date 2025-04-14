@@ -3,6 +3,8 @@ import { ObjectId } from "mongodb";
 export type RequestLoginUser = {
   loginOrEmail: string;
   password: string;
+  title?: string;
+  ip?: string
 };
 
 export type RequestRegisterUser = {

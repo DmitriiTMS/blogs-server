@@ -20,6 +20,7 @@ export const SETTINGS = {
     COMMENTS: "/comments",
     USERS: "/users",
     AUTH: "/auth",
+    SECURITY_DEVICES: "/secutity",
     TEST: "/testing/all-data",
   },
   HTTP_STATUS: {

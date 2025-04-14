@@ -8,6 +8,7 @@ import { authRouter } from './router/auth-router'
 import { commentsRouter } from './router/comments-router'
 import cookieParser from 'cookie-parser'
 import { apiLoggerMiddleware } from './middlewares/apiLoggerMiddleware'
+import { securityDeviceRouter } from './router/securityDevice-router'
 
 
 
@@ -22,4 +23,5 @@ app.use(SETTINGS.PATH.POSTS, postsRouter)
 app.use(SETTINGS.PATH.COMMENTS, commentsRouter)
 app.use(SETTINGS.PATH.USERS, usersRouter)
 app.use(SETTINGS.PATH.AUTH, authRouter)
+app.use(SETTINGS.PATH.SECURITY_DEVICES, securityDeviceRouter)
 app.use(SETTINGS.PATH.TEST, testRouter)

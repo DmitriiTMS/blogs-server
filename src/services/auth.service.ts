@@ -60,6 +60,7 @@ export const authService = {
     );
 
     await refreshTokensRepository.addRefreshToken({ refreshToken });
+    await this.createDeviceUsers(refreshToken, loginDTO.ip!, loginDTO.title! )
 
     return {
       status: ResultStatus.Success,
@@ -82,26 +83,26 @@ export const authService = {
     }
 
     //  Проверяем срок действия токена
-    const now = Math.floor(Date.now() / 1000);
-    if (decodeRefreshToken.exp && decodeRefreshToken.exp < now) {
-      return {
-        status: ResultStatus.Unauthorized,
-        data: null,
-        extensions: [{ field: "refreshToken", message: "Token expired" }],
-      };
-    }
+    // const now = Math.floor(Date.now() / 1000);
+    // if (decodeRefreshToken.exp && decodeRefreshToken.exp < now) {
+    //   return {
+    //     status: ResultStatus.Unauthorized,
+    //     data: null,
+    //     extensions: [{ field: "refreshToken", message: "Token expired" }],
+    //   };
+    // }
 
-    // Проверяем существование сессии в базе
-    const existingSession = await refreshTokensRepository.findByDeviceAndTimeRefreshToken(decodeRefreshToken.deviceId!);
+    // // Проверяем существование сессии в базе
+    // const existingSession = await refreshTokensRepository.findByDeviceAndTimeRefreshToken(decodeRefreshToken.deviceId!);
 
-      // Обновить дату последней активности
-    if (existingSession) {
-      await refreshTokensRepository.updateSessionLastActiveDate(
-        decodeRefreshToken.deviceId!,
-        new Date(decodeRefreshToken.iat! * 1000).toISOString()
-      );
-      return
-    }
+    //   // Обновить дату последней активности
+    // if (existingSession) {
+    //   await refreshTokensRepository.updateSessionLastActiveDate(
+    //     decodeRefreshToken.deviceId!,
+    //     new Date(decodeRefreshToken.iat! * 1000).toISOString()
+    //   );
+    //   return
+    // }
 
     const session = {
       ip: ip === "::1" ? "127.0.0.1" : ip,
