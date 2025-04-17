@@ -7,6 +7,8 @@ const startApp = async () => {
   const res = await runDB(SETTINGS.DB_PATH);
   if (!res) process.exit(1);
 
+  app.set('trust proxy', true)
+
   app.listen(SETTINGS.PORT, () => {
     console.log("...server started in port " + SETTINGS.PORT);
   });

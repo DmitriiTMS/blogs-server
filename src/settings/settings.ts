@@ -20,7 +20,7 @@ export const SETTINGS = {
     COMMENTS: "/comments",
     USERS: "/users",
     AUTH: "/auth",
-    SECURITY_DEVICES: "/secutity",
+    SECURITY_DEVICES: "/security",
     TEST: "/testing/all-data",
   },
   HTTP_STATUS: {
@@ -34,8 +34,8 @@ export const SETTINGS = {
   },
   JWT: {
     SECRET_KEY: process.env.JWT_SECRET as string,
-    TIME: 10000,
-    TIME_REFRESH: 20000,
+    TIME: 10,
+    TIME_REFRESH: 20,
   },
   MAIL: {
     EMAIL: "chunosov.dmitrij@bk.ru",

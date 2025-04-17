@@ -1,6 +1,7 @@
 import { jwtService } from "../adapterServices/jwt.service";
 import { nodemailerService } from "../adapterServices/nodemailer.service";
 import { ResultStatus } from "../common/resultError/resultError";
+import { refreshTokenQueryRepository } from "../repository/refreshTokens/refreshTokenQueryRepository";
 import { refreshTokensRepository } from "../repository/refreshTokens/refreshTokens.repository";
 import { usersRepository } from "../repository/users/usersRepository";
 import { SETTINGS } from "../settings/settings";
@@ -60,7 +61,7 @@ export const authService = {
     );
 
     await refreshTokensRepository.addRefreshToken({ refreshToken });
-    await this.createDeviceUsers(refreshToken, loginDTO.ip!, loginDTO.title! )
+    await this.createDeviceUsers(refreshToken, loginDTO.ip!, loginDTO.title!);
 
     return {
       status: ResultStatus.Success,
@@ -74,6 +75,7 @@ export const authService = {
       refreshToken,
       SETTINGS.JWT.SECRET_KEY
     );
+
     if (!decodeRefreshToken || !ip || !title) {
       return {
         status: ResultStatus.BadRequest,
@@ -82,38 +84,43 @@ export const authService = {
       };
     }
 
-    //  Проверяем срок действия токена
-    // const now = Math.floor(Date.now() / 1000);
-    // if (decodeRefreshToken.exp && decodeRefreshToken.exp < now) {
-    //   return {
-    //     status: ResultStatus.Unauthorized,
-    //     data: null,
-    //     extensions: [{ field: "refreshToken", message: "Token expired" }],
-    //   };
-    // }
-
-    // // Проверяем существование сессии в базе
-    // const existingSession = await refreshTokensRepository.findByDeviceAndTimeRefreshToken(decodeRefreshToken.deviceId!);
-
-    //   // Обновить дату последней активности
-    // if (existingSession) {
-    //   await refreshTokensRepository.updateSessionLastActiveDate(
-    //     decodeRefreshToken.deviceId!,
-    //     new Date(decodeRefreshToken.iat! * 1000).toISOString()
-    //   );
-    //   return
-    // }
-
     const session = {
       ip: ip === "::1" ? "127.0.0.1" : ip,
       title,
       lastActiveDate: new Date(decodeRefreshToken.iat! * 1000).toISOString(),
       deviceId: decodeRefreshToken?.deviceId,
       userId: decodeRefreshToken.userId,
+      refreshToken,
     };
 
     await refreshTokensRepository.createSession(session);
     return true;
+  },
+
+  async veryfyRefreshTokenSession(refreshToken: string) {
+   
+    const checkRefreshToken = await this.checkRefreshSessionToken(refreshToken);
+    if (checkRefreshToken.status !== ResultStatus.Success) {
+      return checkRefreshToken;
+    }
+
+    const token = await jwtService.decodeToken(refreshToken)
+
+    const sessions = await refreshTokensRepository.getAllSessions(token.userId);
+    const resSessions = sessions.map((item) => {
+      return {
+        ip: item.ip,
+        title: item.title,
+        lastActiveDate: item.lastActiveDate,
+        deviceId: item.deviceId,
+      };
+    });
+
+    return {
+      status: ResultStatus.Success,
+      data: resSessions,
+      extensions: [],
+    };
   },
 
   async verifyRefreshToken(refreshToken: string) {
@@ -129,19 +136,6 @@ export const authService = {
         extensions: [{ code: "INVALID_REFRESH_TOKEN" }],
       };
     }
-
-    const newAccessToken = await jwtService.createToken(
-      SETTINGS.JWT.TIME,
-      decodeRefreshToken.userId,
-      decodeRefreshToken.userLogin
-    );
-    const newRefreshToken = await jwtService.createToken(
-      SETTINGS.JWT.TIME_REFRESH,
-      decodeRefreshToken.userId,
-      decodeRefreshToken.userLogin,
-      decodeRefreshToken.deviceId,
-    );
-
     const token = await refreshTokensRepository.findByRefreshToken(
       refreshToken
     );
@@ -155,15 +149,37 @@ export const authService = {
     }
 
     await refreshTokensRepository.deleteRefreshToken(token._id);
-    await refreshTokensRepository.addRefreshToken({
-      refreshToken: newRefreshToken,
-    });
+
+    const newAccessToken = await jwtService.createToken(
+      SETTINGS.JWT.TIME,
+      decodeRefreshToken.userId,
+      decodeRefreshToken.userLogin
+    );
+    const newRefreshToken = await jwtService.createToken(
+      SETTINGS.JWT.TIME_REFRESH,
+      decodeRefreshToken.userId,
+      decodeRefreshToken.userLogin,
+      decodeRefreshToken.deviceId
+    );
+
+    await refreshTokensRepository.addRefreshToken({refreshToken: newRefreshToken});
+
+    const decodeNewRefreshToken = await jwtService.decodeToken(newRefreshToken)
+
+    await refreshTokensRepository.updateSessionLastActiveDate(
+      decodeRefreshToken.deviceId!,
+      refreshToken, // старый refreshToken (для проверки)
+      newRefreshToken, // новый refreshToken
+      new Date(decodeNewRefreshToken.iat! * 1000).toISOString() // новое lastActiveDate
+    );
 
     return {
       status: ResultStatus.Success,
       data: { newAccessToken, newRefreshToken },
       extensions: [],
     };
+    
+   
   },
 
   async logout(refreshToken: string) {
@@ -188,6 +204,11 @@ export const authService = {
         extensions: [],
       };
     }
+
+    await refreshTokenQueryRepository.deleteSessionByDeviceId(
+      decodeRefreshToken.deviceId!
+    );
+
     return {
       status: ResultStatus.Success,
       data: token,
@@ -353,6 +374,35 @@ export const authService = {
     return {
       status: ResultStatus.Success,
       data: null,
+      extensions: [],
+    };
+  },
+
+  async checkRefreshSessionToken(refreshToken: string) {
+    if (!refreshToken) {
+      return {
+        status: ResultStatus.Unauthorized,
+        data: null,
+        extensions: [{ message: "RefreshToken not found" }],
+      };
+    }
+
+    const decodeRefreshToken = await jwtService.verifyToken(
+      refreshToken,
+      SETTINGS.JWT.SECRET_KEY
+    );
+
+    if (!decodeRefreshToken) {
+      return {
+        status: ResultStatus.Unauthorized,
+        data: null,
+        extensions: [{ message: "INVALID_REFRESH_TOKEN" }],
+      };
+    }
+
+    return {
+      status: ResultStatus.Success,
+      data: [],
       extensions: [],
     };
   },

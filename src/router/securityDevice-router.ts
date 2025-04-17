@@ -4,3 +4,5 @@ import { securityDeviceController } from "../controllers/securityDevice.controll
 export const securityDeviceRouter = Router();
 
 securityDeviceRouter.get("/devices", securityDeviceController.getAllSessionDevices);
+securityDeviceRouter.delete("/devices", securityDeviceController.closeAllSessions);
+securityDeviceRouter.delete("/devices/:deviceId", securityDeviceController.closeSession);

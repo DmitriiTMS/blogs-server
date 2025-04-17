@@ -4,7 +4,7 @@ export type RequestLoginUser = {
   loginOrEmail: string;
   password: string;
   title?: string;
-  ip?: string
+  ip?: string;
 };
 
 export type RequestRegisterUser = {
@@ -27,8 +27,17 @@ export type ResponseCodeUser = {
 };
 
 export type SeesionDevice = {
-  ip: string,
-  title: string,
-  lastActiveDate: string | undefined, 
-  deviceId: string | undefined
-}
+  ip: string;
+  title: string;
+  lastActiveDate: string | undefined;
+  deviceId: string | undefined;
+};
+
+export type SessionDEviceDB = {
+  _id: ObjectId;
+  ip: string;
+  title: string;
+  lastActiveDate: string;
+  deviceId: string;
+  userId: string;
+};

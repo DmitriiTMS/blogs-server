@@ -4,13 +4,19 @@ import { SETTINGS } from "../settings/settings";
 import { ResultStatus } from "../common/resultError/resultError";
 import { usersQueryRepository } from "../repository/users/usersQueryRepository";
 import { refreshTokensRepository } from "../repository/refreshTokens/refreshTokens.repository";
+import { jwtService } from "../adapterServices/jwt.service";
 
 export const authController = {
   async login(req: Request, res: Response) {
     const { loginOrEmail, password } = req.body;
-    const {ip} = req;
-    const title = req.headers['user-agent'];
-    const result = await authService.loginUser({ loginOrEmail, password, title, ip });
+    const { ip } = req;
+    const title = req.headers["user-agent"];
+    const result = await authService.loginUser({
+      loginOrEmail,
+      password,
+      title,
+      ip,
+    });
     if (result.status !== ResultStatus.Success) {
       res
         .status(SETTINGS.HTTP_STATUS.UNAUTHORIZATION)
@@ -25,7 +31,6 @@ export const authController = {
     res
       .status(SETTINGS.HTTP_STATUS.OK)
       .json({ accessToken: result.data!.accessToken });
-
   },
 
   async getMe(req: Request, res: Response) {
@@ -45,19 +50,30 @@ export const authController = {
     const { refreshToken } = req.cookies;
     if (!refreshToken) {
       res.sendStatus(SETTINGS.HTTP_STATUS.UNAUTHORIZATION);
-      return
+      return;
     }
+    
+    const decodeRefreshToken = await jwtService.decodeToken(refreshToken);
+    const tokenInDb = await refreshTokensRepository.findByDevice(
+      decodeRefreshToken.deviceId
+    );
+
+    if (!tokenInDb) {
+      res.sendStatus(SETTINGS.HTTP_STATUS.UNAUTHORIZATION);
+      return;
+    }
+
     const result = await authService.verifyRefreshToken(refreshToken);
     if (result.status !== ResultStatus.Success) {
       res.sendStatus(SETTINGS.HTTP_STATUS.UNAUTHORIZATION);
       return;
-    } 
+    }
     res.cookie("refreshToken", result.data!.newRefreshToken, {
       httpOnly: true,
       secure: true,
     });
     res.status(SETTINGS.HTTP_STATUS.OK).json({
-      accessToken: result.data!.newAccessToken,
+      accessToken: result!.data!.newAccessToken,
     });
   },
 
@@ -65,14 +81,27 @@ export const authController = {
     const { refreshToken } = req.cookies;
     if (!refreshToken) {
       res.sendStatus(SETTINGS.HTTP_STATUS.UNAUTHORIZATION);
-      return
+      return;
     }
+
+    const decodeRefreshToken = await jwtService.decodeToken(refreshToken);
+    const tokenInDb = await refreshTokensRepository.findByDevice(
+      decodeRefreshToken.deviceId
+    );
+
+    if (!tokenInDb) {
+      res.sendStatus(SETTINGS.HTTP_STATUS.UNAUTHORIZATION);
+      return;
+    }
+
     const result = await authService.logout(refreshToken);
     if (result.status !== ResultStatus.Success) {
       res.sendStatus(SETTINGS.HTTP_STATUS.UNAUTHORIZATION);
       return;
     }
+
     await refreshTokensRepository.deleteRefreshToken(result.data._id);
+
     res.sendStatus(SETTINGS.HTTP_STATUS.NO_CONTENT);
     return;
   },
