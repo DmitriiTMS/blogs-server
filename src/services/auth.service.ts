@@ -19,6 +19,15 @@ export const emailExamples = {
   },
 };
 
+export const emailPasswordRecovery = {
+  passwordEmail(recoveryCode: string) {
+    return `<h1>Password recovery</h1>
+       <p>To finish password recovery please follow the link below:
+          <a href='https://somesite.com/password-recovery?recoveryCode=${recoveryCode}'>recovery password</a>
+      </p>`;
+  },
+};
+
 export const authService = {
   async loginUser(loginDTO: RequestLoginUser) {
     const user = await usersRepository.findByLoginOrEmail(
@@ -98,13 +107,12 @@ export const authService = {
   },
 
   async veryfyRefreshTokenSession(refreshToken: string) {
-   
     const checkRefreshToken = await this.checkRefreshSessionToken(refreshToken);
     if (checkRefreshToken.status !== ResultStatus.Success) {
       return checkRefreshToken;
     }
 
-    const token = await jwtService.decodeToken(refreshToken)
+    const token = await jwtService.decodeToken(refreshToken);
 
     const sessions = await refreshTokensRepository.getAllSessions(token.userId);
     const resSessions = sessions.map((item) => {
@@ -162,9 +170,11 @@ export const authService = {
       decodeRefreshToken.deviceId
     );
 
-    await refreshTokensRepository.addRefreshToken({refreshToken: newRefreshToken});
+    await refreshTokensRepository.addRefreshToken({
+      refreshToken: newRefreshToken,
+    });
 
-    const decodeNewRefreshToken = await jwtService.decodeToken(newRefreshToken)
+    const decodeNewRefreshToken = await jwtService.decodeToken(newRefreshToken);
 
     await refreshTokensRepository.updateSessionLastActiveDate(
       decodeRefreshToken.deviceId!,
@@ -178,8 +188,6 @@ export const authService = {
       data: { newAccessToken, newRefreshToken },
       extensions: [],
     };
-    
-   
   },
 
   async logout(refreshToken: string) {
@@ -403,6 +411,102 @@ export const authService = {
     return {
       status: ResultStatus.Success,
       data: [],
+      extensions: [],
+    };
+  },
+
+  async passwordRecoveryService(email: string) {
+    const isEmail = new RegExp(/^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/).test(email);
+    if (!isEmail) {
+      return {
+        status: ResultStatus.BadRequest,
+        errorMessage: "Bad Request",
+        data: null,
+        extensions: [{ message: "Incorrect email", field: "email" }],
+      };
+    }
+
+    const user = await usersRepository.findByEmail(email);
+    if (!user) {
+      return {
+        status: ResultStatus.Success,
+        data: null,
+        extensions: [],
+      };
+    }
+
+    const recoveryCode = randomUUID();
+
+    nodemailerService
+      .sendEmail(user.email, recoveryCode, emailPasswordRecovery.passwordEmail)
+      .catch((er) => console.error("error in send email:", er));
+
+    await usersRepository.updateUserСonfirmationCode(
+      user._id.toString(),
+      recoveryCode
+    );
+
+    return {
+      status: ResultStatus.Success,
+      data: null,
+      extensions: [],
+    };
+  },
+
+  async newPasswordService(newPassword: string, recoveryCode: string) {
+    const isUuid = new RegExp(
+      /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i
+    ).test(recoveryCode);
+
+    if (!isUuid) {
+      return {
+        status: ResultStatus.BadRequest,
+        errorMessage: "Bad Request",
+        data: null,
+        extensions: [
+          { message: "Incorrect recoveryCode", field: "recoveryCode" },
+        ],
+      };
+    }
+
+    const resultUser = await usersRepository.findBYCodeEmail(recoveryCode);
+    if (!resultUser) {
+      return {
+        status: ResultStatus.BadRequest,
+        data: null,
+        errorMessage: "NotFound",
+        extensions: [
+          {
+            message: "Confirmation recoveryCode NotFound",
+            field: "recoveryCode",
+          },
+        ],
+      };
+    }
+
+    if (resultUser.emailConfirmation.expirationDate < new Date()) {
+      return {
+        status: ResultStatus.BadRequest,
+        data: null,
+        errorMessage: "BadRequest",
+        extensions: [
+          {
+            message: "Confirmation recoveryCode expired",
+            field: "recoveryCode",
+          },
+        ],
+      };
+    }
+
+    const passwordHash = await bcryptService.generateHash(newPassword);
+    await usersRepository.updateUserPassword(
+      resultUser._id.toString(),
+      passwordHash
+    );
+
+    return {
+      status: ResultStatus.Success,
+      data: null,
       extensions: [],
     };
   },

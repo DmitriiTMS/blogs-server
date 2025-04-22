@@ -19,4 +19,15 @@ const passwordValidation = body("password")
   .isString()
   .withMessage("The Password field must be a string");
 
+export const newPasswordValidation = body("newPassword")
+  .exists()
+  .withMessage("newPassword is required")
+  .trim()
+  .notEmpty()
+  .withMessage("newPassword cannot be empty")
+  .isString()
+  .withMessage("The newPassword field must be a string")
+  .isLength({ min: 6, max: 20 })
+  .withMessage("The newPassword field must be a minimum 6 characters and maximum of 20 characters");
+
 export const fielldsLoginAuth = [loginValidation, passwordValidation];

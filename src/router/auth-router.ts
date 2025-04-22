@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { authController } from "../controllers/auth.controller";
-import { fielldsLoginAuth } from "../validation/validationAuth";
+import { fielldsLoginAuth, newPasswordValidation } from "../validation/validationAuth";
 import { validationResultBodyMiddleware } from "../middlewares/validationResultBodyMiddleware";
 import { accessTokenGuard } from "../middlewares/accessTokenGuard";
 import { fieldValidationUserBody } from "../validation/validationUser";
@@ -39,4 +39,18 @@ authRouter.post(
   "/registration-email-resending",
   apiLoggerMiddleware(10, 5),
   authController.registrationEmailResending
+);
+
+authRouter.post(
+  "/password-recovery",
+  apiLoggerMiddleware(10, 5),
+  authController.passwordRecovery
+);
+
+authRouter.post(
+  "/new-password",
+  apiLoggerMiddleware(10, 5),
+  newPasswordValidation,
+  validationResultBodyMiddleware,
+  authController.newPassword
 );

@@ -51,6 +51,17 @@ export const usersRepository = {
     );
   },
 
+  async updateUserPassword(id: string, password: string) {
+    return await usersCollection.updateOne(
+      { _id: new ObjectId(id) },
+      {
+        $set: {
+          password,
+        },
+      }
+    );
+  },
+
   async updateUserСonfirmationCode(id: string, code: string) {
     return await usersCollection.updateOne(
       { _id: new ObjectId(id) },

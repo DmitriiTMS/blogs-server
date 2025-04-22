@@ -149,4 +149,35 @@ export const authController = {
 
     res.sendStatus(SETTINGS.HTTP_STATUS.NO_CONTENT);
   },
+
+  async passwordRecovery(req: Request, res: Response) {
+    const { email } = req.body;
+
+    const result = await authService.passwordRecoveryService(email)
+
+    if (result.status !== ResultStatus.Success) {
+      res
+        .status(SETTINGS.HTTP_STATUS.BAD_REQUEST)
+        .json({ errorsMessages: result.extensions });
+      return;
+    }
+
+    res.sendStatus(SETTINGS.HTTP_STATUS.NO_CONTENT);
+    
+  },
+
+  async newPassword(req: Request, res: Response) {
+    const { newPassword, recoveryCode } = req.body;
+     const result = await authService.newPasswordService(newPassword, recoveryCode)
+
+    if (result.status !== ResultStatus.Success) {
+      res
+        .status(SETTINGS.HTTP_STATUS.BAD_REQUEST)
+        .json({ errorsMessages: result.extensions });
+      return;
+    }
+
+    res.sendStatus(SETTINGS.HTTP_STATUS.NO_CONTENT);
+    
+  },
 };
