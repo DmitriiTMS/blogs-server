@@ -12,7 +12,8 @@ export const SETTINGS = {
     COMMENTS: "/comments",
     REFRESH_TOKEN:"/refresh_tokens",
     ACCESS_TO_API:"/access_to_api",
-    DEVICE_INFO:"/device_info"
+    DEVICE_INFO:"/device_info",
+    LIKE_INFO:"/like_info"
   },
   PATH: {
     BLOGS: "/blogs",
@@ -34,8 +35,8 @@ export const SETTINGS = {
   },
   JWT: {
     SECRET_KEY: process.env.JWT_SECRET as string,
-    TIME: 10,
-    TIME_REFRESH: 20,
+    TIME: 10000,
+    TIME_REFRESH: 20000,
   },
   MAIL: {
     EMAIL: "chunosov.dmitrij@bk.ru",

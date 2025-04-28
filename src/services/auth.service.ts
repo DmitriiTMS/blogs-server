@@ -1,6 +1,7 @@
 import { jwtService } from "../adapterServices/jwt.service";
 import { nodemailerService } from "../adapterServices/nodemailer.service";
 import { ResultStatus } from "../common/resultError/resultError";
+import { commentsRepository } from "../repository/comments/comments.repository";
 import { refreshTokenQueryRepository } from "../repository/refreshTokens/refreshTokenQueryRepository";
 import { refreshTokensRepository } from "../repository/refreshTokens/refreshTokens.repository";
 import { usersRepository } from "../repository/users/usersRepository";
@@ -9,6 +10,7 @@ import { RequestLoginUser, RequestRegisterUser } from "../types/auth-types";
 import { bcryptService } from "../utils/bcrypt";
 import { randomUUID } from "crypto";
 import { add } from "date-fns/add";
+import { LikeCommentRequest, ReactionType } from "../types/comments";
 
 export const emailExamples = {
   registrationEmail(code: string) {
@@ -71,6 +73,13 @@ export const authService = {
 
     await refreshTokensRepository.addRefreshToken({ refreshToken });
     await this.createDeviceUsers(refreshToken, loginDTO.ip!, loginDTO.title!);
+    const dtoReaction: LikeCommentRequest = {
+          status: ReactionType.None,
+          userId: user._id.toString(),
+          commentId: '',
+          accessToken
+        };
+    await commentsRepository.createLikeInfo(dtoReaction);
 
     return {
       status: ResultStatus.Success,
@@ -217,6 +226,7 @@ export const authService = {
       decodeRefreshToken.deviceId!
     );
 
+    await commentsRepository.logoutUpdateRemoveAccessToken(decodeRefreshToken.userId)
     return {
       status: ResultStatus.Success,
       data: token,

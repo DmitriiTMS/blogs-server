@@ -8,6 +8,7 @@ import {
   postsCollection,
   refreshTokensCollection,
   usersCollection,
+  likeCollection,
 } from "../db/mongoDB";
 
 export const clearDB = async (req: Request, res: Response) => {
@@ -18,5 +19,6 @@ export const clearDB = async (req: Request, res: Response) => {
   await refreshTokensCollection.deleteMany({});
   await accessToApiCollection.deleteMany({});
   await deviceInfoCollection.deleteMany({});
+  await likeCollection.deleteMany({});
   res.status(SETTINGS.HTTP_STATUS.NO_CONTENT).json();
 };
