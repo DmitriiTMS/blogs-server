@@ -79,4 +79,11 @@ export const usersRepository = {
   async findByLogin(login: string): Promise<ResponseCodeUser> {
     return await usersCollection.findOne({ login });
   },
+
+  // ------------------------------------------------------
+ async getUsersByIds(userIds: ObjectId[]) {
+  return await usersCollection
+    .find({ _id: { $in: userIds } })
+    .toArray();
+  }
 };

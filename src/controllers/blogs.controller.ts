@@ -65,8 +65,9 @@ export const blogsController = {
       pageSize: Number(pageSize),
     };
 
+    const userId = req.infoUser?.userId || null;
     const id = new ObjectId(req.params.blogId);
-    const blog = await blogsServices.getOneBlogPost(id, filters);
+    const blog = await blogsServices.getOneBlogPost(id, filters, userId!);
     if (!blog) {
       res.sendStatus(SETTINGS.HTTP_STATUS.NOT_FOUND);
       return;

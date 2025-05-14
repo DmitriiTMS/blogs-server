@@ -4,6 +4,7 @@ import { fieldValidationBlog, idValidationBlog, fieldValidationBlogQuery, fieldV
 import { validationBlogResultMiddleware } from "../middlewares/validationBlogResultMidleware";
 import { authSuperAdminMiddleware } from "../middlewares/authSuperAdminMiddleware";
 import { fieldValidationPostNotBlogId } from "../validation/validationPost";
+import { accessTokenReactions } from "../middlewares/accessTokenReactions";
 
 export const blogsRouter = Router();
 
@@ -21,7 +22,7 @@ blogsRouter.post("/:blogId/posts", authSuperAdminMiddleware,
 
 blogsRouter.get("/:id", idValidationBlog, validationBlogResultMiddleware, blogsController.getBlogById);
 
-blogsRouter.get("/:blogId/posts", idValidationBlogID, fieldValidationBlogQueryNotSearchName,
+blogsRouter.get("/:blogId/posts", accessTokenReactions, idValidationBlogID, fieldValidationBlogQueryNotSearchName,
                                 validationBlogResultMiddleware, blogsController.getBlogByIdPost);
 
 

@@ -9,6 +9,7 @@ export let refreshTokensCollection: any;
 export let accessToApiCollection: any;
 export let deviceInfoCollection: any;
 export let likeCollection: any;
+export let likePostCollection: any;
 
 export let mongoClient: MongoClient;
 
@@ -26,6 +27,7 @@ export const runDB = async (url: string): Promise<boolean> => {
   accessToApiCollection = db.collection(SETTINGS.COLLECTIONS.ACCESS_TO_API)
   deviceInfoCollection = db.collection(SETTINGS.COLLECTIONS.DEVICE_INFO)
   likeCollection = db.collection(SETTINGS.COLLECTIONS.LIKE_INFO)
+  likePostCollection = db.collection(SETTINGS.COLLECTIONS.LIKE_INFO_POST)
 
   try {
     await mongoClient.connect();
